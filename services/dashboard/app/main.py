@@ -8,7 +8,7 @@ import streamlit as st
 
 from wikistream_observatory.config import load_config
 
-from app.data import dashboard_status, load_overview_metrics
+from app.data import bot_spike_empty_state, dashboard_status, load_bot_spike_signals, load_overview_metrics
 
 
 def _metric_rows(metrics: list[dict], metric_name: str) -> list[dict]:
@@ -72,6 +72,79 @@ def render_overview() -> None:
         st.bar_chart({"bot": bot_share, "non_bot": non_bot_share})
 
 
+def _format_ts(value: object) -> str:
+    return value.isoformat() if hasattr(value, "isoformat") else str(value or "n/a")
+
+
+def _format_ratio(value: object) -> str:
+    if value is None:
+        return "new-or-zero-baseline"
+    try:
+        return f"{float(value):.1f}x"
+    except (TypeError, ValueError):
+        return str(value)
+
+
+def _contributors(value: object) -> list[dict]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [item for item in value if isinstance(item, dict)]
+    return []
+
+
+def render_bot_spike_signals() -> None:
+    config = load_config()
+    signals = load_bot_spike_signals(config.snapshots.path)
+
+    st.subheader("Domain-level bot spike signal")
+    st.caption(
+        "Compares bot-flagged activity in the latest "
+        f"{config.signals.current_window_minutes}-minute window with the previous "
+        f"{config.signals.baseline_window_minutes}-minute domain baseline."
+    )
+
+    if not signals:
+        st.info(
+            bot_spike_empty_state(
+                current_window_minutes=config.signals.current_window_minutes,
+                baseline_window_minutes=config.signals.baseline_window_minutes,
+                min_current_events=config.signals.min_events,
+                threshold_ratio=config.signals.threshold_ratio,
+            )
+        )
+        return
+
+    for signal in signals[:10]:
+        domain = signal.get("domain", "unknown domain")
+        with st.container(border=True):
+            st.markdown(f"**{domain}**")
+            cols = st.columns(4)
+            cols[0].metric("Current bot events", int(signal.get("current_bot_events") or 0))
+            cols[1].metric("Baseline / window", f"{float(signal.get('baseline_bot_events_per_window') or 0):.1f}")
+            cols[2].metric("Spike magnitude", _format_ratio(signal.get("spike_ratio")))
+            cols[3].metric("Threshold", f"{float(signal.get('threshold_ratio') or config.signals.threshold_ratio):.1f}x")
+
+            st.write(signal.get("wording") or "Domain-level bot activity spike signal.")
+            st.caption(
+                "Current window: "
+                f"{_format_ts(signal.get('window_start'))} → {_format_ts(signal.get('window_end'))} · "
+                "Baseline window: "
+                f"{_format_ts(signal.get('baseline_window_start'))} → {_format_ts(signal.get('baseline_window_end'))} · "
+                f"Minimum current events: {int(signal.get('min_current_events') or config.signals.min_events)}"
+            )
+
+            contributors = _contributors(signal.get("top_contributing_bot_labels"))
+            if contributors:
+                st.write("Top contributing bot labels (context only)")
+                st.dataframe(contributors[: config.signals.top_bots_limit], hide_index=True, use_container_width=True)
+
+            st.warning(
+                signal.get("limitations")
+                or "This is an observability signal, not an enforcement decision or account-level accusation."
+            )
+
+
 def main() -> None:
     config = load_config()
     st.set_page_config(page_title="WikiStream Observatory", page_icon="🌊", layout="wide")
@@ -80,6 +153,7 @@ def main() -> None:
 
     render_mode_and_freshness()
     render_overview()
+    render_bot_spike_signals()
 
     st.caption(f"Snapshot path: `{config.snapshots.path}` · Refresh interval target: {config.dashboard_refresh_seconds}s")
 
