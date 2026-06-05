@@ -44,6 +44,19 @@ Those items are part of the MVP plan and are documented here as upcoming behavio
 
 Current and planned MVP flow:
 
+```mermaid
+flowchart LR
+    eventstreams["Wikimedia EventStreams\nRecentChanges"] --> ingestor["ingestor service\nhttpx-sse client"]
+    replay["planned replay JSONL\ndata/replay/"] -. "replay mode" .-> ingestor
+    ingestor --> rawtopic["Redpanda topic\nraw_recentchange"]
+    rawtopic --> processor["processor service\nnormalize + aggregate"]
+    processor --> snapshots["Parquet snapshots\ndata/snapshots/"]
+    snapshots --> duckdb["DuckDB queries\nread-only dashboard access"]
+    duckdb --> dashboard["Streamlit dashboard\nhttp://localhost:8501"]
+```
+
+Text equivalent:
+
 ```text
 Wikimedia EventStreams RecentChanges
   -> ingestor service
