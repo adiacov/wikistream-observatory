@@ -118,7 +118,7 @@
 - [X] T044 [US2] Add dashboard data-loading functions for bot spike snapshots and no-signal empty state in `services/dashboard/app/data.py`
 - [X] T045 [US2] Implement Streamlit bot spike signal section with domain, current count, baseline, ratio/category, windows, threshold context, optional top bot labels, and limitation text in `services/dashboard/app/main.py`
 - [X] T046 [US2] Add bot spike snapshot contract fixtures for dashboard rendering in `tests/fixtures/bot_spike_signals.parquet`
-- [ ] T047 [US2] Verify bot spike signal behavior against `contracts/dashboard-contract.md` and record validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
+- [X] T047 [US2] Verify bot spike signal behavior against `contracts/dashboard-contract.md` and record validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
 
 **Checkpoint**: User Story 2 works independently with either live spike data or controlled replay fixtures.
 
