@@ -133,7 +133,7 @@
 ### Tests for User Story 3
 
 - [X] T048 [P] [US3] Add replay data parsing tests for wrapper records, plain RecentChanges-like records, malformed lines, pacing metadata, and source mode in `tests/unit/test_replay.py`
-- [ ] T049 [P] [US3] Add end-to-end replay pipeline integration test asserting overview metrics, expected signal domain, and quality counts in `tests/integration/test_replay_pipeline.py`
+- [X] T049 [P] [US3] Add end-to-end replay pipeline integration test asserting overview metrics, expected signal domain, and quality counts in `tests/integration/test_replay_pipeline.py`
 
 ### Implementation for User Story 3
 
