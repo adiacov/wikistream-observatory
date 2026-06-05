@@ -75,12 +75,17 @@ services/
 
 src/
 └── wikistream_observatory/
+    ├── config.py
+    ├── kafka.py
+    ├── logging.py
+    ├── models.py
     ├── normalization.py
     ├── quality.py
-    ├── windows.py
+    ├── queries.py
     ├── signals.py
     ├── storage.py
-    └── logging.py
+    ├── time_utils.py
+    └── windows.py
 
 data/
 ├── replay/
