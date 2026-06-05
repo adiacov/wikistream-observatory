@@ -9,9 +9,9 @@ description: "Task list template for feature implementation"
 
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+**Tests**: The examples below include test tasks. Tests are OPTIONAL by default. For WikiStream Observatory data-platform features, include validation tasks for core parsing, normalization, aggregation, signal detection, replay/demo behavior, and local run commands when those areas are in scope.
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story. Tasks should preserve responsible-observability language and avoid accusation-oriented outputs.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -154,9 +154,9 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
-- [ ] TXXX Security hardening
-- [ ] TXXX Run quickstart.md validation
+- [ ] TXXX [P] Additional unit tests or data transformation validation in tests/unit/
+- [ ] TXXX Verify responsible-observability wording and public-data limitations in user-facing outputs
+- [ ] TXXX Run quickstart.md validation for local reproducibility
 
 ---
 

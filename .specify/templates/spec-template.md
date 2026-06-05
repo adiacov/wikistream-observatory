@@ -83,6 +83,9 @@
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
   Fill them out with the right functional requirements.
+  For WikiStream Observatory features, keep requirements technology-agnostic and
+  include responsible-observability boundaries when the feature exposes public
+  Wikimedia activity, usernames, account-level signals, or derived risk signals.
 -->
 
 ### Functional Requirements
@@ -108,6 +111,8 @@
 <!--
   ACTION REQUIRED: Define measurable success criteria.
   These must be technology-agnostic and measurable.
+  Include at least one independently verifiable local/reviewer outcome when the
+  feature affects the runnable data platform or dashboard.
 -->
 
 ### Measurable Outcomes

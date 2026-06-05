@@ -40,7 +40,17 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Validate the plan against the WikiStream Observatory Constitution:
+
+- Specification-first traceability: technical choices map to `spec.md` requirements and user stories.
+- Responsible observability: outputs are framed as signals, not enforcement or accusations.
+- Local reproducibility/free tooling: reviewer path uses local commands and no paid services.
+- Testable data transformations: parsing, normalization, aggregation, signal logic, and replay/demo
+  behavior have planned automated tests or reproducible validation.
+- Narrow vertical slice/simplicity: MVP scope is independently demonstrable and avoids unjustified
+  services, dependencies, complex ML, and over-engineering.
+
+Document any violation in Complexity Tracking with rationale and a simpler alternative rejected.
 
 ## Project Structure
 
