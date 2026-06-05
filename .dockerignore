@@ -19,6 +19,8 @@ build/
 
 *.log
 *.log.*
+node_modules/
+Dockerfile*
 coverage/
 htmlcov/
 

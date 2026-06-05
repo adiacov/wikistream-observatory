@@ -88,7 +88,7 @@
 
 - [X] T034 [US5] Write project README with problem framing, architecture, MVP scope, prerequisites, live quickstart, replay quickstart, dashboard guide, cleanup command, limitations, and Wikimedia validation findings from `specs/001-wikistream-mvp-slice/research.md` in `README.md`
 - [X] T035 [US5] Add Mermaid or text architecture diagram for EventStreams → Redpanda → processor → snapshots → Streamlit in `README.md`
-- [ ] T036 [US5] Document environment variables and local port expectations in `.env.example`
+- [X] T036 [US5] Document environment variables and local port expectations in `.env.example`
 - [ ] T037 [US5] Document replay sample provenance, expected signal domain, and expected data-quality counts in `data/replay/README.md`
 
 ### Validation for User Story 5
