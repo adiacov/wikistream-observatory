@@ -114,7 +114,7 @@
 
 - [X] T041 [US2] Implement domain-level bot spike detector with 5-minute current window, previous 30-minute baseline, 20-event minimum, 3.0x threshold, and zero-baseline handling in `src/wikistream_observatory/signals.py`
 - [X] T042 [US2] Implement non-accusatory bot spike wording and mandatory limitations text in `src/wikistream_observatory/signals.py`
-- [ ] T043 [US2] Extend processor loop to compute bot spike signals and write `bot_spike_signals` snapshots in `services/processor/wikistream_processor/main.py`
+- [X] T043 [US2] Extend processor loop to compute bot spike signals and write `bot_spike_signals` snapshots in `services/processor/wikistream_processor/main.py`
 - [ ] T044 [US2] Add dashboard data-loading functions for bot spike snapshots and no-signal empty state in `services/dashboard/app/data.py`
 - [ ] T045 [US2] Implement Streamlit bot spike signal section with domain, current count, baseline, ratio/category, windows, threshold context, optional top bot labels, and limitation text in `services/dashboard/app/main.py`
 - [ ] T046 [US2] Add bot spike snapshot contract fixtures for dashboard rendering in `tests/fixtures/bot_spike_signals.parquet`
