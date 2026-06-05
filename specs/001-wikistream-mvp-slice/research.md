@@ -2,6 +2,15 @@
 
 Research date: 2026-06-05. Live checks confirmed `https://stream.wikimedia.org/v2/stream/recentchange` returns `text/event-stream` and the current RecentChange schema endpoint is reachable at `https://schema.wikimedia.org/repositories/primary/jsonschema/mediawiki/recentchange/latest`.
 
+## Current Wikimedia validation before implementation
+
+Validation date: 2026-06-05.
+
+- RecentChanges EventStreams endpoint `https://stream.wikimedia.org/v2/stream/recentchange` returned HTTP 200 with `content-type: text/event-stream`, confirming the live SSE ingestion path remains available.
+- Current RecentChange schema endpoint `https://schema.wikimedia.org/repositories/primary/jsonschema/mediawiki/recentchange/latest` returned HTTP 200 with `content-type: text/plain; charset=utf-8`; the body is YAML-like schema text with title `mediawiki/recentchange`, `$id: /mediawiki/recentchange/1.0.1`, required fields including `$schema` and `meta`, and properties including `meta`, `type`, `namespace`, `title`, `timestamp`, `user`, `bot`, `minor`, `patrolled`, `length`, `revision`, and `comment`. Because the endpoint is not currently JSON despite its path, the MVP keeps a local normalized JSON Schema under `schemas/` and treats the upstream schema as external validation evidence rather than a runtime JSON dependency.
+- Documentation pages checked and reachable: Wikimedia EventStreams docs (`https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams`), Wikimedia User-Agent policy (`https://foundation.wikimedia.org/wiki/Policy:User-Agent_policy`), and MediaWiki bot documentation (`https://www.mediawiki.org/wiki/Manual:Bots`).
+- Implementation implication: live HTTP requests should send a descriptive `User-Agent`, perform client-side filtering/normalization, treat the Wikimedia `bot` flag as a source-provided activity attribute, and avoid enforcement or accusation-oriented interpretation.
+
 ## Wikimedia RecentChanges ingestion
 
 - **Decision**: Consume Wikimedia EventStreams RecentChanges over SSE in a Python ingestor using `httpx` plus `httpx-sse`, then publish each valid JSON event envelope to Redpanda topic `raw_recentchange`.

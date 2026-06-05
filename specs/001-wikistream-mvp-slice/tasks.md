@@ -31,17 +31,17 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T011 Define strongly typed configuration loading for mode, Kafka, snapshot paths, freshness, replay, and signal thresholds in `src/wikistream_observatory/config.py`
-- [ ] T012 [P] Implement JSON-style structured logging helper with service/event/mode fields in `src/wikistream_observatory/logging.py`
-- [ ] T013 [P] Define dataclasses or typed dictionaries for normalized events, activity metrics, bot spike signals, and data-quality counts in `src/wikistream_observatory/models.py`
-- [ ] T014 [P] Create normalized RecentChanges JSON schema matching `data-model.md` fields in `schemas/recentchange_normalized.schema.json`
-- [ ] T015 Implement atomic Parquet snapshot writer, snapshot dataset path conventions, and 6-hour live retention helper in `src/wikistream_observatory/storage.py`
-- [ ] T016 Implement DuckDB snapshot query helpers that tolerate missing or empty Parquet datasets in `src/wikistream_observatory/queries.py`
-- [ ] T017 Implement Kafka producer/consumer utility wrappers for `raw_recentchange`, message keys, JSON serialization, and broker readiness retries in `src/wikistream_observatory/kafka.py`
-- [ ] T018 Implement shared time utilities for UTC parsing, event-time fallback, bucket boundaries, and freshness classification in `src/wikistream_observatory/time_utils.py`
-- [ ] T019 Add foundational import/config/storage smoke tests in `tests/unit/test_foundation.py`
+- [X] T011 Define strongly typed configuration loading for mode, Kafka, snapshot paths, freshness, replay, and signal thresholds in `src/wikistream_observatory/config.py`
+- [X] T012 [P] Implement JSON-style structured logging helper with service/event/mode fields in `src/wikistream_observatory/logging.py`
+- [X] T013 [P] Define dataclasses or typed dictionaries for normalized events, activity metrics, bot spike signals, and data-quality counts in `src/wikistream_observatory/models.py`
+- [X] T014 [P] Create normalized RecentChanges JSON schema matching `data-model.md` fields in `schemas/recentchange_normalized.schema.json`
+- [X] T015 Implement atomic Parquet snapshot writer, snapshot dataset path conventions, and 6-hour live retention helper in `src/wikistream_observatory/storage.py`
+- [X] T016 Implement DuckDB snapshot query helpers that tolerate missing or empty Parquet datasets in `src/wikistream_observatory/queries.py`
+- [X] T017 Implement Kafka producer/consumer utility wrappers for `raw_recentchange`, message keys, JSON serialization, and broker readiness retries in `src/wikistream_observatory/kafka.py`
+- [X] T018 Implement shared time utilities for UTC parsing, event-time fallback, bucket boundaries, and freshness classification in `src/wikistream_observatory/time_utils.py`
+- [X] T019 Add foundational import/config/storage smoke tests in `tests/unit/test_foundation.py`
 
-- [ ] T020 [P] Verify current Wikimedia EventStreams documentation, RecentChange schema fields, rate-limit/etiquette/user-agent guidance, and bot flag semantics before implementation; preserve findings first in `specs/001-wikistream-mvp-slice/research.md` for later README incorporation
+- [X] T020 [P] Verify current Wikimedia EventStreams documentation, RecentChange schema fields, rate-limit/etiquette/user-agent guidance, and bot flag semantics before implementation; preserve findings first in `specs/001-wikistream-mvp-slice/research.md` for later README incorporation
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in priority order or in parallel by story.
 
