@@ -24,12 +24,22 @@ htmlcov/
 # Runtime/generated data should not be copied into images.
 data/snapshots/
 
-# Local agent/project-private files.
+# Local agent/spec/project-private files.
 .agent/
+.pi/
+.specify/
 sessions/
+specs/
+AGENTS.md
+WORKFLOWS.md
+ENGINEERING.md
+BRIEF.md
 STATE.md
 BRAINSTORM.md
 USER_PROFILE.md
 LOCAL.md
 PRIVATE.md
 secrets/
+
+# Tests are not copied by service Dockerfiles.
+tests/
