@@ -72,7 +72,7 @@
 - [X] T030 [US1] Implement Streamlit mode/freshness section and overview charts in `services/dashboard/app/main.py`
 - [X] T031 [US1] Add Streamlit entry point and page configuration for Docker execution in `services/dashboard/app/main.py`
 - [X] T032 [US1] Add empty-state handling for missing snapshots and unavailable live data in `services/dashboard/app/main.py`
-- [ ] T033 [US1] Verify live-mode local run behavior and record manual validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
+- [X] T033 [US1] Verify live-mode local run behavior and record manual validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
 
 **Checkpoint**: User Story 1 is fully functional and testable independently as the MVP live overview.
 

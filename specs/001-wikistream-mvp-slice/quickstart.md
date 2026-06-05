@@ -12,6 +12,14 @@ This guide defines expected reviewer validation scenarios. Implementation happen
 
 ## Live mode validation
 
+### Phase 3 validation note
+
+Validation date: 2026-06-05.
+
+Phase 3 live-mode startup smoke was run with Docker Compose after building service images. The stack reached a healthy local state: Redpanda became healthy, ingestor connected to `https://stream.wikimedia.org/v2/stream/recentchange` with HTTP 200, ingestor published live RecentChanges messages, processor wrote `normalized_events` and `activity_metrics` snapshots, and Streamlit started on `http://localhost:8501`. A Redpanda healthcheck issue was found during the first attempt and fixed by switching the healthcheck to `rpk cluster info -X brokers=redpanda:9092` with a start period.
+
+Host Python did not have `pytest` installed during this validation, so pytest execution was deferred to a dev environment/container with project dev dependencies. Direct smoke checks, `compileall`, `docker compose config`, `docker compose build`, and a short `docker compose up` live startup were completed.
+
 1. Start the local stack:
 
    ```bash
