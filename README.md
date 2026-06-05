@@ -78,13 +78,13 @@ Replay mode will use the same processor/dashboard path, replacing the live Event
 
 ### Local storage
 
-Generated analytical data is written under `data/snapshots/`. These files are runtime artifacts and are excluded from git except for `.gitkeep`.
+Generated analytical data is written under `data/snapshots/`. These files are runtime artifacts and are excluded from git.
 
 ## Prerequisites
 
 - Docker and Docker Compose.
 - Internet access for live mode.
-- No Wikimedia account, credentials, paid API, cloud account, Kubernetes cluster, or historical backfill is required.
+- No Wikimedia account, credentials, paid API is required.
 
 Expected local ports:
 
