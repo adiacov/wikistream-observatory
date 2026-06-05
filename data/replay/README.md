@@ -2,7 +2,7 @@
 
 This directory is reserved for bundled replay data used to demonstrate WikiStream Observatory without waiting for interesting live Wikimedia stream conditions.
 
-Replay support is part of the MVP plan, but the actual JSONL sample and replay publisher are implemented in later tasks. This README documents the intended sample contract so reviewers can understand what the replay data is for and how it should be interpreted once added.
+Replay support is part of the MVP plan. The bundled JSONL sample has been added; the replay publisher and full Docker replay path are implemented in later tasks. This README documents the sample contract so reviewers can understand what the replay data is for and how it should be interpreted.
 
 ## Planned file
 
@@ -10,7 +10,7 @@ Replay support is part of the MVP plan, but the actual JSONL sample and replay p
 data/replay/recentchange_sample.jsonl
 ```
 
-Each line will be either:
+Each line is either:
 
 1. a representative Wikimedia RecentChanges-like event object; or
 2. a replay wrapper with `source_mode = "replay"` and a `payload` object.
@@ -30,7 +30,7 @@ Example wrapper shape:
 }
 ```
 
-Malformed-line fixtures may intentionally violate JSON syntax or required structure so the data-quality path can count malformed/rejected records separately from accepted records with missing fields.
+Malformed-line fixtures intentionally violate JSON syntax or required structure so the data-quality path can count malformed/rejected records separately from accepted records with missing fields.
 
 ## Provenance and responsible use
 
@@ -42,7 +42,7 @@ Account/user labels in replay examples are demonstration context only. Bot-spike
 
 ## Required sample coverage
 
-When `recentchange_sample.jsonl` is added, it should include enough records to demonstrate:
+`recentchange_sample.jsonl` includes records to demonstrate:
 
 - event volume over time;
 - top active Wikimedia domains;
@@ -54,12 +54,8 @@ When `recentchange_sample.jsonl` is added, it should include enough records to d
 
 ## Expected signal domain
 
-Current status: **not yet available** because `recentchange_sample.jsonl` has not been added.
-
-Planned value to fill in when T050 creates the sample:
-
 ```text
-expected_signal_domain: TBD
+expected_signal_domain: example.wikipedia.org
 ```
 
 The chosen domain should have bot-flagged replay events that exceed the default MVP bot spike threshold:
@@ -72,15 +68,20 @@ The chosen domain should have bot-flagged replay events that exceed the default 
 
 ## Expected data-quality counts
 
-Current status: **not yet available** because replay fixtures have not been added.
-
-Planned values to fill in when T050 creates the sample:
-
 ```text
-expected_malformed_rejected_count: TBD
-expected_missing_field_count: TBD
-expected_accepted_count: TBD
+expected_malformed_rejected_count: 2
+expected_missing_field_count: 1
+expected_accepted_count: 28
 ```
+
+Sample composition:
+
+- 5 low-baseline bot-flagged events on `example.wikipedia.org`;
+- 20 current-window bot-flagged events on `example.wikipedia.org`, producing the known domain-level spike;
+- 2 normal non-bot events on other domains;
+- 1 accepted event missing the `bot` flag;
+- 1 malformed JSON line;
+- 1 rejected JSON object missing a required event type.
 
 Malformed/rejected counts and missing-field counts must remain separate:
 
