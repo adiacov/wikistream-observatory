@@ -108,7 +108,7 @@
 ### Tests for User Story 2
 
 - [X] T039 [P] [US2] Add bot spike detection tests for normal spike, no-signal case, zero-baseline label, thresholds, and top-3 bot label context in `tests/unit/test_signals.py`
-- [ ] T040 [P] [US2] Add responsible-language tests for bot spike wording in `tests/unit/test_responsible_language.py`
+- [X] T040 [P] [US2] Add responsible-language tests for bot spike wording in `tests/unit/test_responsible_language.py`
 
 ### Implementation for User Story 2
 
