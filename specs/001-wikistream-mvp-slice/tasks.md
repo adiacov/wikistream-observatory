@@ -68,10 +68,10 @@
 - [X] T026 [US1] Implement Wikimedia EventStreams SSE client with `httpx`/`httpx-sse`, public endpoint, and capped exponential reconnect backoff in `services/ingestor/wikistream_ingestor/eventstreams.py`
 - [X] T027 [US1] Implement ingestor main loop publishing live `source_mode=live` raw events to `raw_recentchange` in `services/ingestor/wikistream_ingestor/main.py`
 - [X] T028 [US1] Implement processor consumer loop that normalizes raw events, updates activity metrics, writes normalized and metric snapshots every 15 seconds in `services/processor/wikistream_processor/main.py`
-- [ ] T029 [P] [US1] Implement dashboard data-loading functions for overview metrics and freshness using DuckDB snapshots in `services/dashboard/app/data.py`
-- [ ] T030 [US1] Implement Streamlit mode/freshness section and overview charts in `services/dashboard/app/main.py`
-- [ ] T031 [US1] Add Streamlit entry point and page configuration for Docker execution in `services/dashboard/app/main.py`
-- [ ] T032 [US1] Add empty-state handling for missing snapshots and unavailable live data in `services/dashboard/app/main.py`
+- [X] T029 [P] [US1] Implement dashboard data-loading functions for overview metrics and freshness using DuckDB snapshots in `services/dashboard/app/data.py`
+- [X] T030 [US1] Implement Streamlit mode/freshness section and overview charts in `services/dashboard/app/main.py`
+- [X] T031 [US1] Add Streamlit entry point and page configuration for Docker execution in `services/dashboard/app/main.py`
+- [X] T032 [US1] Add empty-state handling for missing snapshots and unavailable live data in `services/dashboard/app/main.py`
 - [ ] T033 [US1] Verify live-mode local run behavior and record manual validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
 
 **Checkpoint**: User Story 1 is fully functional and testable independently as the MVP live overview.
