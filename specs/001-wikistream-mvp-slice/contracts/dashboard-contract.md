@@ -8,6 +8,7 @@ Dashboard URL: `http://localhost:8501` when started with Docker Compose.
    - Shows whether data is `live` or `replay`.
    - Shows latest observed event time.
    - Marks live data fresh only when latest observed event is within 60 seconds; otherwise marks stale.
+   - Refreshes or re-queries snapshot data every 15 seconds by default.
 
 2. **Live/replay activity overview**
    - Event volume over time.
@@ -17,6 +18,7 @@ Dashboard URL: `http://localhost:8501` when started with Docker Compose.
 
 3. **Domain-level bot spike signal**
    - Shows current bot-flagged activity, baseline comparison, spike magnitude, domain, comparison window, and threshold context.
+   - Uses default MVP semantics unless configured otherwise: latest 5-minute current window, previous 30-minute baseline normalized to 5-minute equivalents, minimum 20 current bot events, and 3.0x threshold ratio.
    - May show limited top contributing bot account labels as context.
    - Must include limitation text that the signal is not an enforcement decision, abuse determination, or account-level accusation.
    - If no signal meets threshold, shows clear empty-state text and explains the evaluation method.

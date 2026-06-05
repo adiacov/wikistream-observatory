@@ -43,7 +43,7 @@ Consistent event fact used for metrics, storage, and signals.
 **Validation rules**
 - Records missing `domain` or `event_type` are rejected for MVP metrics because they cannot support required dashboard groups.
 - Records missing optional fields such as `namespace`, `title`, size, revision, or patrol fields remain accepted with missing-field counts.
-- Event-time and observed-time are both stored; windowing may use event-time when present and processing-time fallback when event-time is missing.
+- Event-time and observed-time are both stored. Windowing uses `event_ts` when it is present, parseable, and no more than 10 minutes ahead of `observed_at`; otherwise it uses `observed_at` and records the timestamp issue as a missing-field/data-quality note. This prevents missing, malformed, or highly skewed event timestamps from placing events into inconsistent windows.
 
 ## ActivityMetric
 
@@ -90,7 +90,10 @@ Explainable domain-level observability signal for unusually high bot-flagged act
 **Validation rules**
 - Primary grouping is `domain`, not account.
 - Only bot-flagged normalized events are used for current and baseline counts.
+- Default current window is 5 minutes. Default baseline is the previous 30 minutes for the same domain, excluding the current window, normalized to 5-minute equivalents.
+- Default thresholds are `min_current_events = 20` and `threshold_ratio = 3.0`.
 - Do not emit a signal unless `current_bot_events >= min_current_events` and `spike_ratio >= threshold_ratio`.
+- If baseline is zero, do not calculate an infinite ratio; emit only when `current_bot_events >= min_current_events` and mark the comparison as `new-or-zero-baseline`.
 - If top contributing bot labels are shown, include limitation text.
 
 ## ReplaySample
