@@ -84,16 +84,16 @@
 
 **Independent Test**: Read `README.md`, start the stack with the documented command, open the dashboard, and identify live/replay behavior and signal limitations without source-code knowledge.
 
-### Tests for User Story 5
-
-- [ ] T034 [P] [US5] Add documentation smoke test checking README quickstart commands, dashboard URL, replay mode, and responsible-use keywords in `tests/unit/test_documentation.py`
-
 ### Implementation for User Story 5
 
-- [ ] T035 [US5] Write project README with problem framing, architecture, MVP scope, prerequisites, live quickstart, replay quickstart, dashboard guide, cleanup command, limitations, and Wikimedia validation findings from `specs/001-wikistream-mvp-slice/research.md` in `README.md`
-- [ ] T036 [US5] Add Mermaid or text architecture diagram for EventStreams → Redpanda → processor → snapshots → Streamlit in `README.md`
-- [ ] T037 [US5] Document environment variables and local port expectations in `.env.example`
-- [ ] T038 [US5] Document replay sample provenance, expected signal domain, and expected data-quality counts in `data/replay/README.md`
+- [X] T034 [US5] Write project README with problem framing, architecture, MVP scope, prerequisites, live quickstart, replay quickstart, dashboard guide, cleanup command, limitations, and Wikimedia validation findings from `specs/001-wikistream-mvp-slice/research.md` in `README.md`
+- [ ] T035 [US5] Add Mermaid or text architecture diagram for EventStreams → Redpanda → processor → snapshots → Streamlit in `README.md`
+- [ ] T036 [US5] Document environment variables and local port expectations in `.env.example`
+- [ ] T037 [US5] Document replay sample provenance, expected signal domain, and expected data-quality counts in `data/replay/README.md`
+
+### Validation for User Story 5
+
+- [ ] T038 [US5] Manually audit reviewer-facing documentation against FR-015/SC-009: confirm README covers purpose, problem framing, observability solution, MVP scope, local run path, dashboard usage, replay mode, data-quality behavior, responsible-use boundaries, known limitations, dashboard URL, cleanup command, and local ports; record any gaps or validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
 
 **Checkpoint**: Reviewer-facing documentation supports running and interpreting the MVP independently.
 
@@ -234,7 +234,7 @@ Recommended sequential delivery: Setup → Foundational → US1 → US5 → US2 
 - Setup tasks T003, T004, T006, T007, T008, T009, and T010 can run in parallel after T001 creates directories.
 - Foundational tasks T012, T013, and T014 can run in parallel with each other after T011 is sketched.
 - US1 tests T021, T022, and T023 can run in parallel; dashboard data work T029 can run after snapshot contracts are known while ingestor work T026/T027 proceeds.
-- US5 documentation tests T034 can run in parallel with README drafting T035 once intended content is outlined.
+- US5 documentation work T034-T037 should be implemented first; T038 is a manual acceptance audit after the reviewer-facing docs exist.
 - US2 tests T039 and T040 can run in parallel; dashboard fixture task T046 can run once the signal model is defined.
 - US3 tests T048 and T049 can run in parallel; replay data T050 and replay publisher T051 can be developed in parallel after replay contract review.
 - US4 tests T056 and T057 can run in parallel before quality implementation.
