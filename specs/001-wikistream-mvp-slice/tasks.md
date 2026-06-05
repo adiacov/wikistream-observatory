@@ -63,8 +63,8 @@
 
 ### Implementation for User Story 1
 
-- [ ] T024 [US1] Implement RecentChanges normalization and deterministic fallback event IDs in `src/wikistream_observatory/normalization.py`
-- [ ] T025 [US1] Implement activity metric aggregation for 1-minute windows, top domains, event types, and bot/non-bot share in `src/wikistream_observatory/windows.py`
+- [X] T024 [US1] Implement RecentChanges normalization and deterministic fallback event IDs in `src/wikistream_observatory/normalization.py`
+- [X] T025 [US1] Implement activity metric aggregation for 1-minute windows, top domains, event types, and bot/non-bot share in `src/wikistream_observatory/windows.py`
 - [ ] T026 [US1] Implement Wikimedia EventStreams SSE client with `httpx`/`httpx-sse`, public endpoint, and capped exponential reconnect backoff in `services/ingestor/wikistream_ingestor/eventstreams.py`
 - [ ] T027 [US1] Implement ingestor main loop publishing live `source_mode=live` raw events to `raw_recentchange` in `services/ingestor/wikistream_ingestor/main.py`
 - [ ] T028 [US1] Implement processor consumer loop that normalizes raw events, updates activity metrics, writes normalized and metric snapshots every 15 seconds in `services/processor/wikistream_processor/main.py`
