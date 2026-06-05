@@ -12,16 +12,16 @@
 
 **Purpose**: Initialize the local multi-service Python project and Docker Compose skeleton.
 
-- [ ] T001 Create repository runtime directories with `.gitkeep` files in `services/ingestor/wikistream_ingestor/`, `services/processor/wikistream_processor/`, `services/dashboard/app/`, `src/wikistream_observatory/`, `tests/unit/`, `tests/integration/`, `tests/fixtures/`, `schemas/`, `data/replay/`, and `data/snapshots/`
-- [ ] T002 Create root Python package configuration with Python 3.12 dependencies and pytest settings in `pyproject.toml`
-- [ ] T003 [P] Create shared package initializer in `src/wikistream_observatory/__init__.py`
-- [ ] T004 [P] Create service package initializers in `services/ingestor/wikistream_ingestor/__init__.py`, `services/processor/wikistream_processor/__init__.py`, and `services/dashboard/app/__init__.py`
-- [ ] T005 Create Docker Compose stack with Redpanda, ingestor, processor, dashboard, ports, environment variables, and snapshot volume in `compose.yaml`
-- [ ] T006 [P] Create ingestor Dockerfile installing the shared package and service code in `services/ingestor/Dockerfile`
-- [ ] T007 [P] Create processor Dockerfile installing the shared package and service code in `services/processor/Dockerfile`
-- [ ] T008 [P] Create dashboard Dockerfile exposing Streamlit on port 8501 in `services/dashboard/Dockerfile`
-- [ ] T009 [P] Create local configuration example for live/replay mode, Kafka addresses, snapshot path, and thresholds in `.env.example`
-- [ ] T010 [P] Update generated data exclusions while keeping replay data in version control in `.gitignore`
+- [X] T001 Create repository runtime directories with `.gitkeep` files in `services/ingestor/wikistream_ingestor/`, `services/processor/wikistream_processor/`, `services/dashboard/app/`, `src/wikistream_observatory/`, `tests/unit/`, `tests/integration/`, `tests/fixtures/`, `schemas/`, `data/replay/`, and `data/snapshots/`
+- [X] T002 Create root Python package configuration with Python 3.12 dependencies and pytest settings in `pyproject.toml`
+- [X] T003 [P] Create shared package initializer in `src/wikistream_observatory/__init__.py`
+- [X] T004 [P] Create service package initializers in `services/ingestor/wikistream_ingestor/__init__.py`, `services/processor/wikistream_processor/__init__.py`, and `services/dashboard/app/__init__.py`
+- [X] T005 Create Docker Compose stack with Redpanda, ingestor, processor, dashboard, ports, environment variables, and snapshot volume in `compose.yaml`
+- [X] T006 [P] Create ingestor Dockerfile installing the shared package and service code in `services/ingestor/Dockerfile`
+- [X] T007 [P] Create processor Dockerfile installing the shared package and service code in `services/processor/Dockerfile`
+- [X] T008 [P] Create dashboard Dockerfile exposing Streamlit on port 8501 in `services/dashboard/Dockerfile`
+- [X] T009 [P] Create local configuration example for live/replay mode, Kafka addresses, snapshot path, and thresholds in `.env.example`
+- [X] T010 [P] Update generated data exclusions while keeping replay data in version control in `.gitignore`
 
 ---
 

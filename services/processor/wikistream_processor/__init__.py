@@ -1,0 +1,1 @@
+"""WikiStream processor service package."""

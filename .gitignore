@@ -1,7 +1,28 @@
 .DS_Store
 .env
 .env.*
+!.env.example
 *.log
+*.log.*
+*.tmp
+*.swp
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Generated runtime data
+data/snapshots/*
+!data/snapshots/.gitkeep
 
 # Agent Workspace local cache and private project memory
 .agent/
