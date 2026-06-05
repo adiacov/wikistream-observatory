@@ -1,0 +1,35 @@
+.git/
+.gitignore
+.dockerignore
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+*.log
+*.log.*
+coverage/
+htmlcov/
+
+# Runtime/generated data should not be copied into images.
+data/snapshots/
+
+# Local agent/project-private files.
+.agent/
+sessions/
+STATE.md
+BRAINSTORM.md
+USER_PROFILE.md
+LOCAL.md
+PRIVATE.md
+secrets/

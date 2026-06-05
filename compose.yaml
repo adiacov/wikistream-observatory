@@ -1,0 +1,77 @@
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=512M
+      - --reserve-memory=0M
+      - --node-id=0
+      - --check=false
+      - --kafka-addr=internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr=internal://redpanda:9092,external://localhost:19092
+    ports:
+      - "19092:19092"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health --brokers redpanda:9092 | grep -E 'Healthy:.+true'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  ingestor:
+    build:
+      context: .
+      dockerfile: services/ingestor/Dockerfile
+    environment:
+      WIKISTREAM_MODE: ${WIKISTREAM_MODE:-live}
+      WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS: ${WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS:-redpanda:9092}
+      WIKISTREAM_RAW_TOPIC: ${WIKISTREAM_RAW_TOPIC:-raw_recentchange}
+      WIKISTREAM_REPLAY_PATH: ${WIKISTREAM_REPLAY_PATH:-/app/data/replay/recentchange_sample.jsonl}
+      WIKISTREAM_USER_AGENT: ${WIKISTREAM_USER_AGENT:-wikistream-observatory-local/0.1}
+    volumes:
+      - ./data/replay:/app/data/replay:ro
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+  processor:
+    build:
+      context: .
+      dockerfile: services/processor/Dockerfile
+    environment:
+      WIKISTREAM_MODE: ${WIKISTREAM_MODE:-live}
+      WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS: ${WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS:-redpanda:9092}
+      WIKISTREAM_RAW_TOPIC: ${WIKISTREAM_RAW_TOPIC:-raw_recentchange}
+      WIKISTREAM_SNAPSHOT_PATH: ${WIKISTREAM_SNAPSHOT_PATH:-/app/data/snapshots}
+      WIKISTREAM_FRESHNESS_SECONDS: ${WIKISTREAM_FRESHNESS_SECONDS:-60}
+      WIKISTREAM_SNAPSHOT_INTERVAL_SECONDS: ${WIKISTREAM_SNAPSHOT_INTERVAL_SECONDS:-15}
+      WIKISTREAM_SIGNAL_THRESHOLD_RATIO: ${WIKISTREAM_SIGNAL_THRESHOLD_RATIO:-3.0}
+      WIKISTREAM_SIGNAL_MIN_EVENTS: ${WIKISTREAM_SIGNAL_MIN_EVENTS:-20}
+    volumes:
+      - ./data/snapshots:/app/data/snapshots
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: services/dashboard/Dockerfile
+    environment:
+      WIKISTREAM_MODE: ${WIKISTREAM_MODE:-live}
+      WIKISTREAM_SNAPSHOT_PATH: ${WIKISTREAM_SNAPSHOT_PATH:-/app/data/snapshots}
+      WIKISTREAM_FRESHNESS_SECONDS: ${WIKISTREAM_FRESHNESS_SECONDS:-60}
+      WIKISTREAM_DASHBOARD_REFRESH_SECONDS: ${WIKISTREAM_DASHBOARD_REFRESH_SECONDS:-15}
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data/snapshots:/app/data/snapshots:ro
+    depends_on:
+      - processor
+
+volumes:
+  redpanda-data:
