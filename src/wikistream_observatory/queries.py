@@ -14,6 +14,12 @@ def snapshot_glob(snapshot_root: Path | str, dataset: str) -> str | None:
     return str(dataset_dir / "**" / "*.parquet") if files else None
 
 
+def _sql_string_literal(value: str) -> str:
+    """Return a single-quoted SQL string literal with quotes escaped."""
+
+    return "'" + value.replace("'", "''") + "'"
+
+
 def query_snapshot(snapshot_root: Path | str, dataset: str, sql: str | None = None) -> list[dict[str, Any]]:
     """Query a snapshot dataset and tolerate missing/empty Parquet files."""
 
@@ -25,7 +31,7 @@ def query_snapshot(snapshot_root: Path | str, dataset: str, sql: str | None = No
 
     query = sql or "SELECT * FROM snapshot"
     with duckdb.connect(database=":memory:", read_only=False) as con:
-        con.execute("CREATE VIEW snapshot AS SELECT * FROM read_parquet(?)", [glob])
+        con.execute(f"CREATE VIEW snapshot AS SELECT * FROM read_parquet({_sql_string_literal(glob)})")
         rows = con.execute(query).fetchall()
         columns = [desc[0] for desc in con.description]
     return [dict(zip(columns, row, strict=True)) for row in rows]
