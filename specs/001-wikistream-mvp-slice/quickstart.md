@@ -82,6 +82,37 @@ Expected signal contents:
 
 If no spike meets the threshold, the dashboard should say no current signal meets the configured threshold and explain the evaluation method.
 
+### Phase 5 bot spike validation note
+
+Validation date: 2026-06-05.
+
+User Story 2 bot spike behavior was validated against `contracts/dashboard-contract.md` after T039-T046. Validation used automated unit tests, a generated Parquet fixture at `tests/fixtures/bot_spike_signals.parquet`, dashboard data-loading smoke checks, and source review of the Streamlit rendering section.
+
+| Contract area | Status | Evidence |
+| --- | --- | --- |
+| Domain-level grouping | PASS | `detect_bot_spikes()` groups by domain and tests assert `example.wikipedia.org` as the signal domain. |
+| Current-vs-baseline comparison | PASS | Unit tests cover 5-minute current window, previous 30-minute baseline, normalized baseline-per-window value, and 4.0x ratio. |
+| Thresholds | PASS | Tests cover default 20 current bot events and 3.0x threshold, including no-signal cases below count or ratio. |
+| Zero baseline | PASS | Tests assert zero-baseline output uses `new-or-zero-baseline` and does not emit an infinite ratio. |
+| Top bot labels | PASS | Tests and fixture include top contributing bot labels limited to three and treated as context. |
+| Snapshot output | PASS | Processor writes `bot_spike_signals` snapshots, and fixture smoke confirmed the Parquet schema and values can be read through DuckDB. |
+| Dashboard loading | PASS | `load_bot_spike_signals()` returns signal rows and treats missing datasets as an empty/no-signal state. |
+| Dashboard rendering | PASS | Streamlit section displays domain, current count, baseline, spike magnitude, threshold, window context, optional top labels, no-signal empty state, and limitation text. |
+| Responsible wording | PASS | Tests assert wording uses observability language, avoids accusation-oriented terms, and states signals are not enforcement decisions or account-level accusations. |
+
+Validation commands run:
+
+```bash
+PYTHONPATH=. uv run --extra dev pytest tests/unit/test_signals.py tests/unit/test_responsible_language.py tests/integration/test_live_pipeline_smoke.py
+docker compose config
+```
+
+Additional fixture/dashboard smoke checks confirmed `tests/fixtures/bot_spike_signals.parquet` contains the expected domain, count, ratio, threshold, wording, and limitation fields.
+
+Known remaining limits:
+- This validates the signal implementation and dashboard contract using fixtures/smoke checks; full replay-mode dashboard observation remains for Phase 6 replay tasks.
+- Replay mode is still planned for Phase 6, so deterministic end-to-end replay display is not available yet.
+
 ## Recovery and cleanup validation
 
 Expected recovery behavior:
