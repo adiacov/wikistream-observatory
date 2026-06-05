@@ -10,6 +10,16 @@ from typing import Any
 _RESERVED = {"name", "msg", "args", "levelname", "levelno", "pathname", "filename", "module", "exc_info", "exc_text", "stack_info", "lineno", "funcName", "created", "msecs", "relativeCreated", "thread", "threadName", "processName", "process", "message", "asctime"}
 
 
+class MergingLoggerAdapter(logging.LoggerAdapter):
+    """LoggerAdapter that preserves per-call structured fields."""
+
+    def process(self, msg: str, kwargs: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+        extra = dict(self.extra)
+        extra.update(kwargs.get("extra", {}))
+        kwargs["extra"] = extra
+        return msg, kwargs
+
+
 class JsonFormatter(logging.Formatter):
     """Format log records as compact JSON objects."""
 
@@ -28,7 +38,7 @@ class JsonFormatter(logging.Formatter):
         return json.dumps(payload, default=str, sort_keys=True)
 
 
-def configure_logging(service: str, mode: str, level: int | str = logging.INFO) -> logging.LoggerAdapter:
+def configure_logging(service: str, mode: str, level: int | str = logging.INFO) -> MergingLoggerAdapter:
     """Configure root logging and return an adapter carrying service and mode fields."""
 
     handler = logging.StreamHandler()
@@ -40,7 +50,7 @@ def configure_logging(service: str, mode: str, level: int | str = logging.INFO) 
     root.setLevel(level)
 
     logger = logging.getLogger("wikistream")
-    return logging.LoggerAdapter(logger, {"service": service, "mode": mode})
+    return MergingLoggerAdapter(logger, {"service": service, "mode": mode})
 
 
 def log_event(logger: logging.LoggerAdapter, event: str, message: str, **fields: Any) -> None:
