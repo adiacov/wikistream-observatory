@@ -134,3 +134,29 @@ A first-time reviewer should be able to read `README.md` and identify within 10 
 - data-quality behavior;
 - responsible observability limits;
 - known limitations.
+
+### Phase 4 documentation audit note
+
+Validation date: 2026-06-05.
+
+Reviewer-facing documentation was manually audited against FR-015 and SC-009 after T034-T037. The audit checked `README.md`, `.env.example`, and `data/replay/README.md` rather than using brittle README unit tests.
+
+| Requirement area | Status | Evidence |
+| --- | --- | --- |
+| Project purpose | PASS | `README.md` title, tagline, and introduction explain WikiStream Observatory as a local Wikimedia RecentChanges observability project. |
+| Problem framing | PASS | `README.md` "Why this exists" explains cross-wiki activity, automation context, and the value of summarizing the raw stream. |
+| Observability solution | PASS | `README.md` describes normalized facts, windowed metrics, snapshots, and dashboard signals. |
+| MVP scope/current status | PASS | `README.md` separates the current completed live overview slice from specified but not-yet-implemented replay, bot spike, and data-quality counters. |
+| Local run path | PASS | `README.md` documents `docker compose up --build`. |
+| Dashboard usage | PASS | `README.md` documents mode/freshness, overview metrics, empty states, and planned sections. |
+| Replay mode | PASS | `README.md`, `.env.example`, and `data/replay/README.md` document replay as planned/not yet implemented and require replay data not be shown as current live activity. |
+| Data-quality behavior | PASS | `README.md` documents current limitations; `data/replay/README.md` defines separate malformed/rejected and missing-field expected counts for future replay samples. |
+| Responsible-use boundaries | PASS | Docs state read-only use, observability framing, no enforcement decisions, and no account-level accusations. |
+| Known limitations | PASS | `README.md` includes a dedicated responsible-use and limitations section. |
+| Dashboard URL and local ports | PASS | `README.md` and `.env.example` document `http://localhost:8501` and Redpanda host debug port `localhost:19092`. |
+| Cleanup command | PASS | `README.md` documents `rm -rf data/snapshots/*` and `docker compose down`. |
+
+Gaps intentionally left for later phases:
+- replay sample concrete expected domain and counts remain `TBD` until T050 creates `data/replay/recentchange_sample.jsonl`;
+- bot spike and data-quality dashboard sections remain planned until their implementation phases land;
+- T038 validates documentation coverage, not end-to-end replay behavior.
