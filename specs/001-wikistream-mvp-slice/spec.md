@@ -134,7 +134,7 @@ A data engineering reviewer can read project documentation that explains the pro
 - **Activity Metric**: A summarized measurement over a recent time window, such as event volume, domain counts, event type counts, and bot/non-bot share.
 - **Bot Spike Signal**: An explainable domain-level observation that current bot-flagged activity on a Wikimedia domain is unusually high relative to that domain's recent baseline. It includes current level, baseline level, comparison magnitude, domain context, optional top contributing bot account labels, and limitations.
 - **Replay Sample**: A bundled reusable set of public-data-derived example events that demonstrates dashboard metrics and one bot spike signal without requiring live collection.
-- **Data Quality Note**: A recorded count or explanation of malformed/rejected events, missing-field events, stale data, or other conditions affecting interpretation. Malformed/rejected event counts and missing-field event counts are tracked separately.
+- **Data Quality Count**: A recorded count or explanation of malformed/rejected events, missing-field events, stale data, or other conditions affecting interpretation. Malformed/rejected event counts and missing-field event counts are tracked separately.
 
 ## Success Criteria *(mandatory)*
 

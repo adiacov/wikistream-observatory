@@ -41,6 +41,8 @@
 - [ ] T018 Implement shared time utilities for UTC parsing, event-time fallback, bucket boundaries, and freshness classification in `src/wikistream_observatory/time_utils.py`
 - [ ] T019 Add foundational import/config/storage smoke tests in `tests/unit/test_foundation.py`
 
+- [ ] T020 [P] Verify current Wikimedia EventStreams documentation, RecentChange schema fields, rate-limit/etiquette/user-agent guidance, and bot flag semantics before implementation; preserve findings first in `specs/001-wikistream-mvp-slice/research.md` for later README incorporation
+
 **Checkpoint**: Foundation ready - user story implementation can now begin in priority order or in parallel by story.
 
 ---
@@ -55,22 +57,22 @@
 
 > **NOTE: Write these tests FIRST and ensure they fail before implementation.**
 
-- [ ] T020 [P] [US1] Add normalization tests for required fields, optional missing fields, bot default behavior, and timestamp fallback in `tests/unit/test_normalization.py`
-- [ ] T021 [P] [US1] Add activity-window aggregation tests for events per minute, top domains, event types, and bot/non-bot share in `tests/unit/test_windows.py`
-- [ ] T022 [P] [US1] Add live pipeline integration smoke test using a fake raw Kafka payload and snapshot output in `tests/integration/test_live_pipeline_smoke.py`
+- [ ] T021 [P] [US1] Add normalization tests for required fields, optional missing fields, bot default behavior, and timestamp fallback in `tests/unit/test_normalization.py`
+- [ ] T022 [P] [US1] Add activity-window aggregation tests for events per minute, top domains, event types, and bot/non-bot share in `tests/unit/test_windows.py`
+- [ ] T023 [P] [US1] Add live pipeline integration smoke test using a fake raw Kafka payload and snapshot output in `tests/integration/test_live_pipeline_smoke.py`
 
 ### Implementation for User Story 1
 
-- [ ] T023 [US1] Implement RecentChanges normalization and deterministic fallback event IDs in `src/wikistream_observatory/normalization.py`
-- [ ] T024 [US1] Implement activity metric aggregation for 1-minute windows, top domains, event types, and bot/non-bot share in `src/wikistream_observatory/windows.py`
-- [ ] T025 [US1] Implement Wikimedia EventStreams SSE client with `httpx`/`httpx-sse`, public endpoint, and capped exponential reconnect backoff in `services/ingestor/wikistream_ingestor/eventstreams.py`
-- [ ] T026 [US1] Implement ingestor main loop publishing live `source_mode=live` raw events to `raw_recentchange` in `services/ingestor/wikistream_ingestor/main.py`
-- [ ] T027 [US1] Implement processor consumer loop that normalizes raw events, updates activity metrics, writes normalized and metric snapshots every 15 seconds in `services/processor/wikistream_processor/main.py`
-- [ ] T028 [P] [US1] Implement dashboard data-loading functions for overview metrics and freshness using DuckDB snapshots in `services/dashboard/app/data.py`
-- [ ] T029 [US1] Implement Streamlit mode/freshness section and overview charts in `services/dashboard/app/main.py`
-- [ ] T030 [US1] Add Streamlit entry point and page configuration for Docker execution in `services/dashboard/app/main.py`
-- [ ] T031 [US1] Add empty-state handling for missing snapshots and unavailable live data in `services/dashboard/app/main.py`
-- [ ] T032 [US1] Verify live-mode local run behavior and record manual validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
+- [ ] T024 [US1] Implement RecentChanges normalization and deterministic fallback event IDs in `src/wikistream_observatory/normalization.py`
+- [ ] T025 [US1] Implement activity metric aggregation for 1-minute windows, top domains, event types, and bot/non-bot share in `src/wikistream_observatory/windows.py`
+- [ ] T026 [US1] Implement Wikimedia EventStreams SSE client with `httpx`/`httpx-sse`, public endpoint, and capped exponential reconnect backoff in `services/ingestor/wikistream_ingestor/eventstreams.py`
+- [ ] T027 [US1] Implement ingestor main loop publishing live `source_mode=live` raw events to `raw_recentchange` in `services/ingestor/wikistream_ingestor/main.py`
+- [ ] T028 [US1] Implement processor consumer loop that normalizes raw events, updates activity metrics, writes normalized and metric snapshots every 15 seconds in `services/processor/wikistream_processor/main.py`
+- [ ] T029 [P] [US1] Implement dashboard data-loading functions for overview metrics and freshness using DuckDB snapshots in `services/dashboard/app/data.py`
+- [ ] T030 [US1] Implement Streamlit mode/freshness section and overview charts in `services/dashboard/app/main.py`
+- [ ] T031 [US1] Add Streamlit entry point and page configuration for Docker execution in `services/dashboard/app/main.py`
+- [ ] T032 [US1] Add empty-state handling for missing snapshots and unavailable live data in `services/dashboard/app/main.py`
+- [ ] T033 [US1] Verify live-mode local run behavior and record manual validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
 
 **Checkpoint**: User Story 1 is fully functional and testable independently as the MVP live overview.
 
@@ -84,14 +86,14 @@
 
 ### Tests for User Story 5
 
-- [ ] T033 [P] [US5] Add documentation smoke test checking README quickstart commands, dashboard URL, replay mode, and responsible-use keywords in `tests/unit/test_documentation.py`
+- [ ] T034 [P] [US5] Add documentation smoke test checking README quickstart commands, dashboard URL, replay mode, and responsible-use keywords in `tests/unit/test_documentation.py`
 
 ### Implementation for User Story 5
 
-- [ ] T034 [US5] Write project README with problem framing, architecture, MVP scope, prerequisites, live quickstart, replay quickstart, dashboard guide, cleanup command, and limitations in `README.md`
-- [ ] T035 [US5] Add Mermaid or text architecture diagram for EventStreams → Redpanda → processor → snapshots → Streamlit in `README.md`
-- [ ] T036 [US5] Document environment variables and local port expectations in `.env.example`
-- [ ] T037 [US5] Document replay sample provenance, expected signal domain, and expected data-quality counts in `data/replay/README.md`
+- [ ] T035 [US5] Write project README with problem framing, architecture, MVP scope, prerequisites, live quickstart, replay quickstart, dashboard guide, cleanup command, limitations, and Wikimedia validation findings from `specs/001-wikistream-mvp-slice/research.md` in `README.md`
+- [ ] T036 [US5] Add Mermaid or text architecture diagram for EventStreams → Redpanda → processor → snapshots → Streamlit in `README.md`
+- [ ] T037 [US5] Document environment variables and local port expectations in `.env.example`
+- [ ] T038 [US5] Document replay sample provenance, expected signal domain, and expected data-quality counts in `data/replay/README.md`
 
 **Checkpoint**: Reviewer-facing documentation supports running and interpreting the MVP independently.
 
@@ -105,18 +107,18 @@
 
 ### Tests for User Story 2
 
-- [ ] T038 [P] [US2] Add bot spike detection tests for normal spike, no-signal case, zero-baseline label, thresholds, and top-3 bot label context in `tests/unit/test_signals.py`
-- [ ] T039 [P] [US2] Add responsible-language tests for bot spike wording in `tests/unit/test_responsible_language.py`
+- [ ] T039 [P] [US2] Add bot spike detection tests for normal spike, no-signal case, zero-baseline label, thresholds, and top-3 bot label context in `tests/unit/test_signals.py`
+- [ ] T040 [P] [US2] Add responsible-language tests for bot spike wording in `tests/unit/test_responsible_language.py`
 
 ### Implementation for User Story 2
 
-- [ ] T040 [US2] Implement domain-level bot spike detector with 5-minute current window, previous 30-minute baseline, 20-event minimum, 3.0x threshold, and zero-baseline handling in `src/wikistream_observatory/signals.py`
-- [ ] T041 [US2] Implement non-accusatory bot spike wording and mandatory limitations text in `src/wikistream_observatory/signals.py`
-- [ ] T042 [US2] Extend processor loop to compute bot spike signals and write `bot_spike_signals` snapshots in `services/processor/wikistream_processor/main.py`
-- [ ] T043 [US2] Add dashboard data-loading functions for bot spike snapshots and no-signal empty state in `services/dashboard/app/data.py`
-- [ ] T044 [US2] Implement Streamlit bot spike signal section with domain, current count, baseline, ratio/category, windows, threshold context, optional top bot labels, and limitation text in `services/dashboard/app/main.py`
-- [ ] T045 [US2] Add bot spike snapshot contract fixtures for dashboard rendering in `tests/fixtures/bot_spike_signals.parquet`
-- [ ] T046 [US2] Verify bot spike signal behavior against `contracts/dashboard-contract.md` and record validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
+- [ ] T041 [US2] Implement domain-level bot spike detector with 5-minute current window, previous 30-minute baseline, 20-event minimum, 3.0x threshold, and zero-baseline handling in `src/wikistream_observatory/signals.py`
+- [ ] T042 [US2] Implement non-accusatory bot spike wording and mandatory limitations text in `src/wikistream_observatory/signals.py`
+- [ ] T043 [US2] Extend processor loop to compute bot spike signals and write `bot_spike_signals` snapshots in `services/processor/wikistream_processor/main.py`
+- [ ] T044 [US2] Add dashboard data-loading functions for bot spike snapshots and no-signal empty state in `services/dashboard/app/data.py`
+- [ ] T045 [US2] Implement Streamlit bot spike signal section with domain, current count, baseline, ratio/category, windows, threshold context, optional top bot labels, and limitation text in `services/dashboard/app/main.py`
+- [ ] T046 [US2] Add bot spike snapshot contract fixtures for dashboard rendering in `tests/fixtures/bot_spike_signals.parquet`
+- [ ] T047 [US2] Verify bot spike signal behavior against `contracts/dashboard-contract.md` and record validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
 
 **Checkpoint**: User Story 2 works independently with either live spike data or controlled replay fixtures.
 
@@ -130,17 +132,17 @@
 
 ### Tests for User Story 3
 
-- [ ] T047 [P] [US3] Add replay data parsing tests for wrapper records, plain RecentChanges-like records, malformed lines, pacing metadata, and source mode in `tests/unit/test_replay.py`
-- [ ] T048 [P] [US3] Add end-to-end replay pipeline integration test asserting overview metrics, expected signal domain, and quality counts in `tests/integration/test_replay_pipeline.py`
+- [ ] T048 [P] [US3] Add replay data parsing tests for wrapper records, plain RecentChanges-like records, malformed lines, pacing metadata, and source mode in `tests/unit/test_replay.py`
+- [ ] T049 [P] [US3] Add end-to-end replay pipeline integration test asserting overview metrics, expected signal domain, and quality counts in `tests/integration/test_replay_pipeline.py`
 
 ### Implementation for User Story 3
 
-- [ ] T049 [US3] Create bundled representative JSONL sample with normal activity, a known bot spike, missing-field examples, and malformed/rejected examples in `data/replay/recentchange_sample.jsonl`
-- [ ] T050 [US3] Implement replay reader and publisher preserving event order and labeling `source_mode=replay` in `services/ingestor/wikistream_ingestor/replay.py`
-- [ ] T051 [US3] Route ingestor startup between live EventStreams and replay publisher based on `WIKISTREAM_MODE` in `services/ingestor/wikistream_ingestor/main.py`
-- [ ] T052 [US3] Ensure processor writes replay-labeled snapshots and flushes final replay snapshots at completion in `services/processor/wikistream_processor/main.py`
-- [ ] T053 [US3] Update dashboard freshness/status behavior so replay data is never presented as current live activity in `services/dashboard/app/main.py`
-- [ ] T054 [US3] Verify replay-mode quickstart and record expected sample outputs in `specs/001-wikistream-mvp-slice/quickstart.md`
+- [ ] T050 [US3] Create bundled representative JSONL sample with normal activity, a known bot spike, missing-field examples, and malformed/rejected examples in `data/replay/recentchange_sample.jsonl`
+- [ ] T051 [US3] Implement replay reader and publisher preserving event order and labeling `source_mode=replay` in `services/ingestor/wikistream_ingestor/replay.py`
+- [ ] T052 [US3] Route ingestor startup between live EventStreams and replay publisher based on `WIKISTREAM_MODE` in `services/ingestor/wikistream_ingestor/main.py`
+- [ ] T053 [US3] Ensure processor writes replay-labeled snapshots and flushes final replay snapshots at completion in `services/processor/wikistream_processor/main.py`
+- [ ] T054 [US3] Update dashboard freshness/status behavior so replay data is never presented as current live activity in `services/dashboard/app/main.py`
+- [ ] T055 [US3] Verify replay-mode quickstart and record expected sample outputs in `specs/001-wikistream-mvp-slice/quickstart.md`
 
 **Checkpoint**: User Story 3 provides a deterministic demo path independent of live stream availability.
 
@@ -154,15 +156,15 @@
 
 ### Tests for User Story 4
 
-- [ ] T055 [P] [US4] Add data-quality classification tests for malformed JSON, rejected missing required fields, accepted missing optional fields, and timestamp issues in `tests/unit/test_quality.py`
-- [ ] T056 [P] [US4] Add freshness classification tests for live fresh, live stale, no-data, and replay status in `tests/unit/test_freshness.py`
+- [ ] T056 [P] [US4] Add data-quality classification tests for malformed JSON, rejected missing required fields, accepted missing optional fields, and timestamp issues in `tests/unit/test_quality.py`
+- [ ] T057 [P] [US4] Add freshness classification tests for live fresh, live stale, no-data, and replay status in `tests/unit/test_freshness.py`
 
 ### Implementation for User Story 4
 
-- [ ] T057 [US4] Implement data-quality classification and counters for malformed/rejected, missing-field, accepted, and timestamp fallback records in `src/wikistream_observatory/quality.py`
-- [ ] T058 [US4] Extend processor to persist `data_quality_counts` snapshots with latest observed event time and freshness status inputs in `services/processor/wikistream_processor/main.py`
-- [ ] T059 [US4] Implement dashboard data-quality section with separate malformed/rejected and missing-field counts plus explanatory notes in `services/dashboard/app/main.py`
-- [ ] T060 [US4] Add data-quality and derived-signal limitation text to user-facing documentation in `README.md`
+- [ ] T058 [US4] Implement data-quality classification and counters for malformed/rejected, missing-field, accepted, and timestamp fallback records in `src/wikistream_observatory/quality.py`
+- [ ] T059 [US4] Extend processor to persist `data_quality_counts` snapshots with latest observed event time and freshness status inputs in `services/processor/wikistream_processor/main.py`
+- [ ] T060 [US4] Implement dashboard data-quality section with separate malformed/rejected and missing-field counts plus explanatory notes in `services/dashboard/app/main.py`
+- [ ] T061 [US4] Add data-quality and derived-signal limitation text to user-facing documentation in `README.md`
 
 **Checkpoint**: User Story 4 makes reliability and interpretation limits visible and independently testable.
 
@@ -172,13 +174,16 @@
 
 **Purpose**: Validate the whole MVP, improve reviewer ergonomics, and ensure constitution compliance.
 
-- [ ] T061 [P] Add Makefile targets for `make test`, `make up`, `make replay`, `make down`, and `make clean-snapshots` in `Makefile`
-- [ ] T062 [P] Add a lightweight local run helper for live and replay modes in `bin/wikistream-dev`
-- [ ] T063 Run unit and integration tests and fix discovered issues in `tests/unit/` and `tests/integration/`
-- [ ] T064 Run Docker Compose live quickstart validation and fix discovered issues in `compose.yaml`
-- [ ] T065 Run Docker Compose replay quickstart validation and fix discovered issues in `data/replay/recentchange_sample.jsonl`
-- [ ] T066 Review all user-facing text for responsible-observability wording and remove accusation-oriented language in `README.md` and `services/dashboard/app/main.py`
-- [ ] T067 Update project state after implementation readiness in `STATE.md`
+- [ ] T062 [P] Add Makefile targets for `make test`, `make up`, `make replay`, `make down`, and `make clean-snapshots` in `Makefile`
+- [ ] T063 [P] Add a lightweight local run helper for live and replay modes in `bin/wikistream-dev`
+- [ ] T064 Run unit and integration tests and fix discovered issues in `tests/unit/` and `tests/integration/`
+- [ ] T065 Run Docker Compose live quickstart validation and fix discovered issues in `compose.yaml`
+- [ ] T066 Run Docker Compose replay quickstart validation and fix discovered issues in `data/replay/recentchange_sample.jsonl`
+- [ ] T067 Validate the MVP processes at least 300 RecentChanges events per minute with bounded memory and summarized dashboard output using replay or synthetic fixtures in `tests/integration/test_throughput.py`
+- [ ] T068 Assert at least 95% handling/rejection coverage for intentionally malformed or missing-field replay fixtures in `tests/integration/test_replay_pipeline.py`
+- [ ] T069 Validate restart/idempotence behavior by rerunning replay or restarting processor and checking deterministic event IDs prevent unsafe duplicate metrics/signals in `tests/integration/test_restart_idempotence.py`
+- [ ] T070 Review all user-facing text for responsible-observability wording and remove accusation-oriented language in `README.md` and `services/dashboard/app/main.py`
+- [ ] T071 Update project state after implementation readiness in `STATE.md`
 
 ---
 
@@ -228,44 +233,44 @@ Recommended sequential delivery: Setup → Foundational → US1 → US5 → US2 
 
 - Setup tasks T003, T004, T006, T007, T008, T009, and T010 can run in parallel after T001 creates directories.
 - Foundational tasks T012, T013, and T014 can run in parallel with each other after T011 is sketched.
-- US1 tests T020, T021, and T022 can run in parallel; dashboard data work T028 can run after snapshot contracts are known while ingestor work T025/T026 proceeds.
-- US5 documentation tests T033 can run in parallel with README drafting T034 once intended content is outlined.
-- US2 tests T038 and T039 can run in parallel; dashboard fixture task T045 can run once the signal model is defined.
-- US3 tests T047 and T048 can run in parallel; replay data T049 and replay publisher T050 can be developed in parallel after replay contract review.
-- US4 tests T055 and T056 can run in parallel before quality implementation.
-- Polish tasks T061 and T062 can run in parallel because they touch different files.
+- US1 tests T021, T022, and T023 can run in parallel; dashboard data work T029 can run after snapshot contracts are known while ingestor work T026/T027 proceeds.
+- US5 documentation tests T034 can run in parallel with README drafting T035 once intended content is outlined.
+- US2 tests T039 and T040 can run in parallel; dashboard fixture task T046 can run once the signal model is defined.
+- US3 tests T048 and T049 can run in parallel; replay data T050 and replay publisher T051 can be developed in parallel after replay contract review.
+- US4 tests T056 and T057 can run in parallel before quality implementation.
+- Polish tasks T062 and T063 can run in parallel because they touch different files.
 
 ---
 
 ## Parallel Example: User Story 1
 
 ```bash
-Task: "T020 [P] [US1] Add normalization tests for required fields, optional missing fields, bot default behavior, and timestamp fallback in tests/unit/test_normalization.py"
-Task: "T021 [P] [US1] Add activity-window aggregation tests for events per minute, top domains, event types, and bot/non-bot share in tests/unit/test_windows.py"
-Task: "T022 [P] [US1] Add live pipeline integration smoke test using a fake raw Kafka payload and snapshot output in tests/integration/test_live_pipeline_smoke.py"
+Task: "T021 [P] [US1] Add normalization tests for required fields, optional missing fields, bot default behavior, and timestamp fallback in tests/unit/test_normalization.py"
+Task: "T022 [P] [US1] Add activity-window aggregation tests for events per minute, top domains, event types, and bot/non-bot share in tests/unit/test_windows.py"
+Task: "T023 [P] [US1] Add live pipeline integration smoke test using a fake raw Kafka payload and snapshot output in tests/integration/test_live_pipeline_smoke.py"
 ```
 
 ## Parallel Example: User Story 2
 
 ```bash
-Task: "T038 [P] [US2] Add bot spike detection tests for normal spike, no-signal case, zero-baseline label, thresholds, and top-3 bot label context in tests/unit/test_signals.py"
-Task: "T039 [P] [US2] Add responsible-language tests for bot spike wording in tests/unit/test_responsible_language.py"
-Task: "T045 [US2] Add bot spike snapshot contract fixtures for dashboard rendering in tests/fixtures/bot_spike_signals.parquet"
+Task: "T039 [P] [US2] Add bot spike detection tests for normal spike, no-signal case, zero-baseline label, thresholds, and top-3 bot label context in tests/unit/test_signals.py"
+Task: "T040 [P] [US2] Add responsible-language tests for bot spike wording in tests/unit/test_responsible_language.py"
+Task: "T046 [US2] Add bot spike snapshot contract fixtures for dashboard rendering in tests/fixtures/bot_spike_signals.parquet"
 ```
 
 ## Parallel Example: User Story 3
 
 ```bash
-Task: "T047 [P] [US3] Add replay data parsing tests for wrapper records, plain RecentChanges-like records, malformed lines, pacing metadata, and source mode in tests/unit/test_replay.py"
-Task: "T049 [US3] Create bundled representative JSONL sample with normal activity, a known bot spike, missing-field examples, and malformed/rejected examples in data/replay/recentchange_sample.jsonl"
-Task: "T050 [US3] Implement replay reader and publisher preserving event order and labeling source_mode=replay in services/ingestor/wikistream_ingestor/replay.py"
+Task: "T048 [P] [US3] Add replay data parsing tests for wrapper records, plain RecentChanges-like records, malformed lines, pacing metadata, and source mode in tests/unit/test_replay.py"
+Task: "T050 [US3] Create bundled representative JSONL sample with normal activity, a known bot spike, missing-field examples, and malformed/rejected examples in data/replay/recentchange_sample.jsonl"
+Task: "T051 [US3] Implement replay reader and publisher preserving event order and labeling source_mode=replay in services/ingestor/wikistream_ingestor/replay.py"
 ```
 
 ## Parallel Example: User Story 4
 
 ```bash
-Task: "T055 [P] [US4] Add data-quality classification tests for malformed JSON, rejected missing required fields, accepted missing optional fields, and timestamp issues in tests/unit/test_quality.py"
-Task: "T056 [P] [US4] Add freshness classification tests for live fresh, live stale, no-data, and replay status in tests/unit/test_freshness.py"
+Task: "T056 [P] [US4] Add data-quality classification tests for malformed JSON, rejected missing required fields, accepted missing optional fields, and timestamp issues in tests/unit/test_quality.py"
+Task: "T057 [P] [US4] Add freshness classification tests for live fresh, live stale, no-data, and replay status in tests/unit/test_freshness.py"
 ```
 
 ---
