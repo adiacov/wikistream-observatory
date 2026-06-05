@@ -4,9 +4,9 @@ Research date: 2026-06-05. Live checks confirmed `https://stream.wikimedia.org/v
 
 ## Wikimedia RecentChanges ingestion
 
-- **Decision**: Consume Wikimedia EventStreams RecentChanges over SSE in a Python ingestor and publish each valid JSON event envelope to Redpanda topic `raw_recentchange`.
+- **Decision**: Consume Wikimedia EventStreams RecentChanges over SSE in a Python ingestor using `httpx` plus `httpx-sse`, then publish each valid JSON event envelope to Redpanda topic `raw_recentchange`.
 - **Rationale**: EventStreams is the public live source named by the spec. Keeping ingestion thin preserves raw event evidence and separates external connectivity from normalization and signal logic.
-- **Alternatives considered**: Direct dashboard polling was rejected because it would skip the streaming architecture. Server-side filtering was rejected because Wikimedia EventStreams consumers should filter client-side. Historical API backfill was rejected as out of MVP scope.
+- **Alternatives considered**: Direct dashboard polling was rejected because it would skip the streaming architecture. Server-side filtering was rejected because Wikimedia EventStreams consumers should filter client-side. Historical API backfill was rejected as out of MVP scope. `requests`-based SSE handling was considered but rejected in favor of `httpx`/`httpx-sse` for clearer streaming-client semantics and timeout configuration.
 
 ## Redpanda as Kafka-compatible broker
 
@@ -22,14 +22,14 @@ Research date: 2026-06-05. Live checks confirmed `https://stream.wikimedia.org/v
 
 ## Analytical storage: Parquet snapshots plus DuckDB reads
 
-- **Decision**: Processor writes append/periodic Parquet snapshots for normalized events, windowed metrics, bot spike signals, and data-quality counts. Dashboard queries these files through DuckDB.
+- **Decision**: Processor writes append/periodic Parquet snapshots for normalized events, windowed metrics, bot spike signals, and data-quality counts. Dashboard queries these files through DuckDB. Snapshot writes use temporary files followed by atomic rename/move, and generated live snapshots are retained for approximately the latest 6 hours by default.
 - **Rationale**: DuckDB is excellent for local analytical queries, while Parquet files avoid concurrent write/read complexity between processor and dashboard. DuckDB can also materialize local views or summaries if later needed.
 - **Alternatives considered**: Direct DuckDB writes from the processor were considered but deferred unless single-writer/read-only access is proven simple. PostgreSQL/ClickHouse were rejected as extra infrastructure for the MVP.
 
 ## Windowed metrics and domain-level bot spike signal
 
-- **Decision**: Compute simple event-time or processing-time windowed metrics from normalized events, with a first signal comparing current domain-level bot event counts against a recent baseline for the same domain.
-- **Rationale**: This meets the non-trivial signal requirement while remaining explainable and testable. Domain-level detection aligns with clarified requirements and reduces account-level accusation risk.
+- **Decision**: Compute simple windowed metrics using event-time when valid and processing-time fallback when event-time is missing, malformed, or highly skewed. The first signal compares current 5-minute domain-level bot event counts against the previous 30-minute baseline for the same domain, normalized to 5-minute equivalents. Default thresholds are at least 20 bot events and at least a 3.0x spike ratio; zero-baseline cases are labeled `new-or-zero-baseline` instead of infinite-ratio anomalies.
+- **Rationale**: This meets the non-trivial signal requirement while remaining explainable and testable. Domain-level detection aligns with clarified requirements and reduces account-level accusation risk. Concrete default windows and thresholds prevent implementation tasks from inventing signal semantics.
 - **Alternatives considered**: Account-first bot anomaly detection, non-bot automation-like scoring, and small-wiki burst detection were rejected for MVP scope; they remain future signals.
 
 ## Replay/sample data

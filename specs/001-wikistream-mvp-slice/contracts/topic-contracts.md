@@ -1,5 +1,12 @@
 # Contract: Streaming Topics and Analytical Snapshots
 
+## Redpanda service contract
+
+- Internal Kafka bootstrap address: `redpanda:9092`.
+- Optional host/debug Kafka bootstrap address: `localhost:19092`.
+- Redpanda data is stored in a local Docker volume so service restarts do not require topic recreation during normal MVP use.
+- `processor` should wait for broker readiness before consuming; `dashboard` does not depend on broker readiness directly.
+
 ## Redpanda topics
 
 ### `raw_recentchange`
@@ -38,4 +45,8 @@ Required logical datasets:
 Common rules:
 - Include `source_mode` in every dataset.
 - Include `computed_at` or `observed_at` where applicable.
+- Processor MUST write snapshots through temporary paths followed by atomic rename/move so dashboard readers see only complete files.
+- Processor is the only writer to snapshot datasets; dashboard access is read-only through DuckDB queries over Parquet.
+- Snapshot batches SHOULD be written at least every 15 seconds in live mode and at replay completion in replay mode.
+- Generated live snapshots SHOULD be retained for approximately 6 hours by default; bundled replay data is retained indefinitely.
 - Dashboard consumers MUST tolerate empty datasets and show useful empty-state text.

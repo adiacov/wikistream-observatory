@@ -7,6 +7,8 @@ This guide defines expected reviewer validation scenarios. Implementation happen
 - Docker and Docker Compose available locally.
 - Internet access for live Wikimedia RecentChanges mode.
 - No cloud account, paid API, Kubernetes, or Wikimedia credentials are required.
+- Expected local ports: Streamlit dashboard on `localhost:8501`; Redpanda Kafka API may be exposed on `localhost:19092` for debugging.
+- Generated analytical snapshots are written under `data/snapshots/` and may be deleted between runs.
 
 ## Live mode validation
 
@@ -29,7 +31,8 @@ This guide defines expected reviewer validation scenarios. Implementation happen
    - event type breakdown is shown;
    - bot/non-bot share is shown;
    - latest observed event time is visible;
-   - live freshness is `fresh` only when latest event age is 60 seconds or less.
+   - live freshness is `fresh` only when latest event age is 60 seconds or less;
+   - dashboard views refresh/query snapshots every 15 seconds by default.
 
 4. If no event has arrived for more than 60 seconds, expected outcome:
    - dashboard marks data as stale and does not silently present stale data as current.
@@ -54,6 +57,12 @@ This guide defines expected reviewer validation scenarios. Implementation happen
 
 Use either live data with a natural spike or bundled replay data with the known spike.
 
+Default MVP signal semantics:
+- current window: latest 5-minute window;
+- baseline: previous 30 minutes for the same domain, normalized to 5-minute equivalents;
+- threshold: at least 20 bot-flagged events and at least 3.0x the baseline;
+- zero baseline: label as `new-or-zero-baseline` instead of infinite ratio.
+
 Expected signal contents:
 - domain;
 - current bot-flagged event count or rate;
@@ -64,6 +73,21 @@ Expected signal contents:
 - limitation text stating that this is an observability signal, not an enforcement decision or account-level accusation.
 
 If no spike meets the threshold, the dashboard should say no current signal meets the configured threshold and explain the evaluation method.
+
+## Recovery and cleanup validation
+
+Expected recovery behavior:
+- Wikimedia EventStreams disconnects are handled with capped exponential backoff and structured reconnect logs.
+- Restarting the ingestor or processor does not require deleting local data for normal MVP use.
+- Missing or empty snapshots show a dashboard no-data/empty-state message rather than an error-only page.
+
+Cleanup generated local snapshots between runs:
+
+```bash
+rm -rf data/snapshots/*
+```
+
+Bundled replay data under `data/replay/` should not be deleted by cleanup.
 
 ## Data-quality validation
 
