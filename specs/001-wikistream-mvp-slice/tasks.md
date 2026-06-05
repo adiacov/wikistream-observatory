@@ -57,9 +57,9 @@
 
 > **NOTE: Write these tests FIRST and ensure they fail before implementation.**
 
-- [ ] T021 [P] [US1] Add normalization tests for required fields, optional missing fields, bot default behavior, and timestamp fallback in `tests/unit/test_normalization.py`
-- [ ] T022 [P] [US1] Add activity-window aggregation tests for events per minute, top domains, event types, and bot/non-bot share in `tests/unit/test_windows.py`
-- [ ] T023 [P] [US1] Add live pipeline integration smoke test using a fake raw Kafka payload and snapshot output in `tests/integration/test_live_pipeline_smoke.py`
+- [X] T021 [P] [US1] Add normalization tests for required fields, optional missing fields, bot default behavior, and timestamp fallback in `tests/unit/test_normalization.py`
+- [X] T022 [P] [US1] Add activity-window aggregation tests for events per minute, top domains, event types, and bot/non-bot share in `tests/unit/test_windows.py`
+- [X] T023 [P] [US1] Add live pipeline integration smoke test using a fake raw Kafka payload and snapshot output in `tests/integration/test_live_pipeline_smoke.py`
 
 ### Implementation for User Story 1
 
