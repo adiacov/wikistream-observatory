@@ -93,7 +93,7 @@
 
 ### Validation for User Story 5
 
-- [ ] T038 [US5] Manually audit reviewer-facing documentation against FR-015/SC-009: confirm README covers purpose, problem framing, observability solution, MVP scope, local run path, dashboard usage, replay mode, data-quality behavior, responsible-use boundaries, known limitations, dashboard URL, cleanup command, and local ports; record any gaps or validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
+- [X] T038 [US5] Manually audit reviewer-facing documentation against FR-015/SC-009: confirm README covers purpose, problem framing, observability solution, MVP scope, local run path, dashboard usage, replay mode, data-quality behavior, responsible-use boundaries, known limitations, dashboard URL, cleanup command, and local ports; record any gaps or validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
 
 **Checkpoint**: Reviewer-facing documentation supports running and interpreting the MVP independently.
 
