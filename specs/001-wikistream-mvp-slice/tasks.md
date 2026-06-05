@@ -67,7 +67,7 @@
 - [X] T025 [US1] Implement activity metric aggregation for 1-minute windows, top domains, event types, and bot/non-bot share in `src/wikistream_observatory/windows.py`
 - [X] T026 [US1] Implement Wikimedia EventStreams SSE client with `httpx`/`httpx-sse`, public endpoint, and capped exponential reconnect backoff in `services/ingestor/wikistream_ingestor/eventstreams.py`
 - [X] T027 [US1] Implement ingestor main loop publishing live `source_mode=live` raw events to `raw_recentchange` in `services/ingestor/wikistream_ingestor/main.py`
-- [ ] T028 [US1] Implement processor consumer loop that normalizes raw events, updates activity metrics, writes normalized and metric snapshots every 15 seconds in `services/processor/wikistream_processor/main.py`
+- [X] T028 [US1] Implement processor consumer loop that normalizes raw events, updates activity metrics, writes normalized and metric snapshots every 15 seconds in `services/processor/wikistream_processor/main.py`
 - [ ] T029 [P] [US1] Implement dashboard data-loading functions for overview metrics and freshness using DuckDB snapshots in `services/dashboard/app/data.py`
 - [ ] T030 [US1] Implement Streamlit mode/freshness section and overview charts in `services/dashboard/app/main.py`
 - [ ] T031 [US1] Add Streamlit entry point and page configuration for Docker execution in `services/dashboard/app/main.py`
