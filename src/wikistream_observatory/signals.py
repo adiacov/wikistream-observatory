@@ -40,7 +40,7 @@ def _build_wording(*, domain: str, current_count: int, baseline_per_window: floa
 
 
 def _limitations() -> str:
-    return "This is an observability signal, not an enforcement decision or account-level accusation. Bot labels and contributor names are contextual and require review."
+    return "This is an observability signal, not an enforcement decision or account-level accusation. Bot labels and contributor names are contextual; stream-derived signals require review with Wikimedia context."
 
 
 def detect_bot_spikes(
