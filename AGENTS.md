@@ -26,3 +26,8 @@ When meaningful work finishes:
 Before implementation, inspect existing files. If ENGINEERING.md exists, read and follow it for coding and implementation work. Make minimal, precise changes. Run relevant checks when possible. Summarize changed files and next steps.
 
 Project-specific instructions may be added below.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
