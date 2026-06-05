@@ -38,6 +38,10 @@ When coding or editing files:
 5. run relevant checks when possible;
 6. summarize changed files and next steps.
 
+## Spec Kit implementation cadence
+
+Work one phase at a time and stop to reflect at each phase boundary before continuing. Within a phase, complete work in small task-sized pieces and commit after each completed task, including staged documentation/spec updates, so the history stays reviewable and recovery is easy.
+
 ## Additional notes
 
 - use web research actively
