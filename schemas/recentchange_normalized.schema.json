@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/wikistream/recentchange_normalized.schema.json",
+  "title": "NormalizedRecentChangeEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "source_mode",
+    "domain",
+    "event_type",
+    "event_ts",
+    "observed_at",
+    "is_bot",
+    "comment_present",
+    "missing_fields",
+    "quality_status"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "minLength": 1 },
+    "source_mode": { "enum": ["live", "replay"] },
+    "domain": { "type": "string", "minLength": 1 },
+    "event_type": { "type": "string", "minLength": 1 },
+    "event_ts": { "type": "string", "format": "date-time" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "user_label": { "type": ["string", "null"] },
+    "is_bot": { "type": "boolean" },
+    "namespace": { "type": ["integer", "null"] },
+    "title": { "type": ["string", "null"] },
+    "minor": { "type": ["boolean", "null"] },
+    "patrolled": { "type": ["boolean", "null"] },
+    "length_old": { "type": ["integer", "null"] },
+    "length_new": { "type": ["integer", "null"] },
+    "revision_old": { "type": ["integer", "null"] },
+    "revision_new": { "type": ["integer", "null"] },
+    "comment_present": { "type": "boolean" },
+    "missing_fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "quality_status": {
+      "enum": ["accepted", "accepted_missing_fields", "rejected"]
+    }
+  }
+}
