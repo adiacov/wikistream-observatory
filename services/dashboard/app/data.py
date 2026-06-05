@@ -18,6 +18,35 @@ def load_recent_events(snapshot_path: Path | str, limit: int = 100) -> list[dict
     return latest_rows(snapshot_path, "normalized_events", order_by="observed_at", limit=limit)
 
 
+def load_bot_spike_signals(snapshot_path: Path | str, limit: int = 50) -> list[dict[str, Any]]:
+    """Load latest domain-level bot spike signal snapshots.
+
+    Missing or empty signal datasets are a valid no-signal state and return an
+    empty list so dashboard rendering can show explanatory text instead of an
+    error.
+    """
+
+    return latest_rows(snapshot_path, "bot_spike_signals", order_by="computed_at", limit=limit)
+
+
+def bot_spike_empty_state(
+    *,
+    current_window_minutes: int = 5,
+    baseline_window_minutes: int = 30,
+    min_current_events: int = 20,
+    threshold_ratio: float = 3.0,
+) -> str:
+    """Explain that no domain-level bot spike currently meets the threshold."""
+
+    return (
+        "No domain-level bot activity spike currently meets the configured threshold. "
+        f"The MVP compares bot-flagged events in the latest {current_window_minutes}-minute window "
+        f"with the previous {baseline_window_minutes}-minute baseline for the same domain, "
+        f"and emits a signal only when there are at least {min_current_events} current bot-flagged events "
+        f"and activity is at least {threshold_ratio:.1f}x the baseline."
+    )
+
+
 def latest_observed_at(snapshot_path: Path | str) -> datetime | None:
     rows = query_snapshot(snapshot_path, "normalized_events", "SELECT max(observed_at) AS latest_observed_at FROM snapshot")
     if not rows:
