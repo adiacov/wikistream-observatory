@@ -32,6 +32,25 @@ def _observed_at_from_raw(raw: dict[str, Any], fallback: datetime) -> datetime:
     return ensure_utc(parsed or fallback)
 
 
+def _deduplicate_events_by_id(events: Iterable[NormalizedRecentChangeEvent]) -> list[NormalizedRecentChangeEvent]:
+    """Keep the first normalized event for each deterministic event id.
+
+    Kafka replay or processor restarts can expose the same raw event more than
+    once. Dashboard facts, metrics, and signals should use event identity rather
+    than raw delivery count so reprocessing does not inflate observability
+    outputs.
+    """
+
+    seen: set[str] = set()
+    deduplicated: list[NormalizedRecentChangeEvent] = []
+    for event in events:
+        if event.event_id in seen:
+            continue
+        seen.add(event.event_id)
+        deduplicated.append(event)
+    return deduplicated
+
+
 def process_raw_messages(
     raw_messages: Iterable[dict[str, Any]],
     *,
@@ -50,7 +69,7 @@ def process_raw_messages(
     fallback_observed_at = ensure_utc(observed_at or utc_now())
     raw_list = list(raw_messages)
     classifications = [classify_raw_event(raw, observed_at=_observed_at_from_raw(raw, fallback_observed_at)) for raw in raw_list]
-    normalized = [classification.event for classification in classifications if classification.event is not None]
+    normalized = _deduplicate_events_by_id(classification.event for classification in classifications if classification.event is not None)
 
     metrics = compute_activity_metrics(normalized, computed_at=fallback_observed_at)
     signal_events = signal_history if signal_history is not None and signal_history else normalized

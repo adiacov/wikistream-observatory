@@ -199,6 +199,28 @@ Expected recovery behavior:
 - Restarting the ingestor or processor does not require deleting local data for normal MVP use.
 - Missing or empty snapshots show a dashboard no-data/empty-state message rather than an error-only page.
 
+### Phase 8 restart/idempotence validation note
+
+Validation date: 2026-06-06.
+
+T069 adds `tests/integration/test_restart_idempotence.py` and processor de-duplication by deterministic normalized `event_id`. The test simulates replay reruns and duplicate delivery after restart by processing the same replay records twice and then processing a replay file where the same records are duplicated in one recovered batch.
+
+Observed/validated behavior:
+
+| Check | Expected/observed result |
+| --- | --- |
+| Replay rerun determinism | Two runs over the same replay file produce identical normalized event IDs, event-volume metrics, quality counts, and bot-spike signal values |
+| Duplicate delivery protection | A duplicated replay batch still produces 26 normalized facts, not 52 |
+| Metrics idempotence | Event-volume metrics remain 26 total accepted facts, not doubled |
+| Signal idempotence | The domain-level bot spike remains one signal for `example.wikipedia.org` with 20 current bot events |
+| Quality evidence | Raw quality counts still describe raw replay delivery evidence, so duplicate accepted delivery reports `accepted_count = 52` while dashboard facts/metrics/signals stay de-duplicated |
+
+Validation command:
+
+```bash
+PYTHONPATH=. uv run pytest tests/integration/test_restart_idempotence.py
+```
+
 Cleanup generated local snapshots between runs:
 
 ```bash
