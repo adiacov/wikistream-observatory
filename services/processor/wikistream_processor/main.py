@@ -102,9 +102,9 @@ def process_raw_messages(
             missing_field_count += 1
 
     metrics = compute_activity_metrics(normalized, computed_at=fallback_observed_at)
-    signal_events = signal_history if signal_history is not None else normalized
+    signal_events = signal_history if signal_history is not None and signal_history else normalized
     signal_computed_at = fallback_observed_at
-    if compute_signals and normalized and normalized[0].source_mode == "replay":
+    if compute_signals and signal_events and signal_events[0].source_mode == "replay":
         max_event_ts = max(ensure_utc(event.event_ts) for event in signal_events)
         signal_computed_at = floor_to_bucket(max_event_ts, current_window_minutes) + timedelta(minutes=current_window_minutes)
     signals = (
@@ -245,12 +245,13 @@ def run_processor() -> None:
                 computed_at = utc_now()
                 normalized_for_history, _ = process_raw_message_batch(pending, observed_at=computed_at)
                 signal_history.extend(normalized_for_history)
-                signal_history = prune_signal_history(
-                    signal_history,
-                    now=computed_at,
-                    current_window_minutes=config.signals.current_window_minutes,
-                    baseline_window_minutes=config.signals.baseline_window_minutes,
-                )
+                if config.mode == "live":
+                    signal_history = prune_signal_history(
+                        signal_history,
+                        now=computed_at,
+                        current_window_minutes=config.signals.current_window_minutes,
+                        baseline_window_minutes=config.signals.baseline_window_minutes,
+                    )
                 result = process_raw_messages(
                     pending,
                     observed_at=computed_at,

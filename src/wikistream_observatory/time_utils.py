@@ -23,6 +23,8 @@ def parse_event_timestamp(value: object) -> datetime | None:
 
     if value is None:
         return None
+    if isinstance(value, datetime):
+        return ensure_utc(value)
     if isinstance(value, (int, float)):
         return datetime.fromtimestamp(value, tz=timezone.utc)
     if isinstance(value, str):
