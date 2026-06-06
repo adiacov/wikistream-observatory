@@ -93,7 +93,8 @@ Malformed/rejected counts and missing-field counts must remain separate:
 Command:
 
 ```bash
-WIKISTREAM_MODE=replay docker compose up --build
+docker compose build
+WIKISTREAM_MODE=replay docker compose up
 ```
 
 Expected dashboard behavior:

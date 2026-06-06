@@ -114,6 +114,33 @@ Known remaining limits:
 - The fuller data-quality dashboard section is still Phase 7 work; Phase 6 writes replay quality snapshots and validates their expected counts.
 - Replay validation was inspected through snapshot/dashboard helper outputs rather than a browser screenshot.
 
+### Phase 8 replay quickstart validation note
+
+Validation date: 2026-06-06.
+
+The Phase 8 replay quickstart path was validated after the Docker image caching refactor using an explicit cached build check followed by a no-build replay startup:
+
+```bash
+docker compose config
+docker compose build
+WIKISTREAM_MODE=replay WIKISTREAM_SNAPSHOT_INTERVAL_SECONDS=2 docker compose up --no-build -d
+```
+
+The build check reported 0 dependency download lines and reused cached layers. Replay startup used the existing `wikistream-observatory/*:local` images. Redpanda became healthy, the replay ingestor published the bundled sample and exited successfully, the processor wrote replay-labeled `normalized_events`, `activity_metrics`, `bot_spike_signals`, and `data_quality_counts` snapshots, and Streamlit served `http://localhost:8501` with HTTP 200.
+
+Observed replay outputs within 1 minute:
+
+| Dataset/check | Observed result |
+| --- | --- |
+| `normalized_events` snapshots | 28 replay-labeled accepted events |
+| `activity_metrics` snapshots | 18 replay overview metric rows |
+| `bot_spike_signals` snapshots | 1 replay signal for `example.wikipedia.org` |
+| `data_quality_counts` snapshots | `accepted_count = 28`, `missing_field_count = 1`, `malformed_rejected_count = 2`, `freshness_status = replay` |
+| Dashboard status helper | `source_mode = replay`, latest observed timestamp populated, `freshness_status = replay` |
+| Dashboard HTTP check | `http://localhost:8501` returned HTTP 200 |
+
+No changes to `data/replay/recentchange_sample.jsonl` were required; the sample still matches its documented expected signal domain and data-quality counts.
+
 ## Bot spike signal validation
 
 Use either live data with a natural spike or bundled replay data with the known spike.

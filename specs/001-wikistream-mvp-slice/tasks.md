@@ -178,7 +178,7 @@
 - [X] T063 [P] Add a lightweight local run helper for live and replay modes in `bin/wikistream-dev`
 - [X] T064 Run unit and integration tests and fix discovered issues in `tests/unit/` and `tests/integration/`
 - [X] T065 Run Docker Compose live quickstart validation and fix discovered issues in `compose.yaml`
-- [ ] T066 Run Docker Compose replay quickstart validation and fix discovered issues in `data/replay/recentchange_sample.jsonl`
+- [X] T066 Run Docker Compose replay quickstart validation and fix discovered issues in `data/replay/recentchange_sample.jsonl`
 - [ ] T067 Validate the MVP processes at least 300 RecentChanges events per minute with bounded memory and summarized dashboard output using replay or synthetic fixtures in `tests/integration/test_throughput.py`
 - [ ] T068 Assert at least 95% handling/rejection coverage for intentionally malformed or missing-field replay fixtures in `tests/integration/test_replay_pipeline.py`
 - [ ] T069 Validate restart/idempotence behavior by rerunning replay or restarting processor and checking deterministic event IDs prevent unsafe duplicate metrics/signals in `tests/integration/test_restart_idempotence.py`
