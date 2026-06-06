@@ -2,6 +2,10 @@ x-service-build: &service-build
   context: .
   dockerfile: services/Dockerfile
 
+# Run app services as the host user in local development so bind-mounted
+# snapshots are not created as root-owned files on the host.
+x-host-user: &host-user "${HOST_UID:-1000}:${HOST_GID:-1000}"
+
 services:
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
@@ -29,6 +33,7 @@ services:
 
   ingestor:
     image: wikistream-observatory/ingestor:local
+    user: *host-user
     build:
       <<: *service-build
       target: ingestor
@@ -46,6 +51,7 @@ services:
 
   processor:
     image: wikistream-observatory/processor:local
+    user: *host-user
     build:
       <<: *service-build
       target: processor
@@ -66,6 +72,7 @@ services:
 
   dashboard:
     image: wikistream-observatory/dashboard:local
+    user: *host-user
     build:
       <<: *service-build
       target: dashboard
