@@ -23,31 +23,30 @@ The goal is transparency and data engineering practice, not enforcement or accus
 The current completed slice supports:
 
 - live Wikimedia RecentChanges ingestion;
+- replay/sample data mode from bundled JSONL records;
 - Redpanda/Kafka-compatible raw event transport;
 - RecentChanges normalization for required dashboard fields;
 - 1-minute activity metrics;
+- domain-level bot spike signal snapshots and dashboard section;
+- replay data-quality snapshot counts for the bundled malformed/rejected and missing-field examples;
 - Parquet snapshots queried through DuckDB helpers;
-- a Streamlit dashboard showing mode, freshness, event volume, top domains, event types, and bot/non-bot share;
+- a Streamlit dashboard showing mode, freshness, event volume, top domains, event types, bot/non-bot share, and bot spike signals;
 - empty-state handling for missing snapshots;
 - local Docker Compose execution.
 
-Specified but not yet implemented in code:
+Still planned for later MVP phases:
 
-- replay/sample data mode;
-- domain-level bot spike signal snapshots and dashboard section;
-- visible malformed/rejected and missing-field data-quality counters;
+- fuller live data-quality dashboard section and freshness classification tests;
 - Makefile/development helper commands.
-
-Those items are part of the MVP plan and are documented here as upcoming behavior so reviewers understand the intended full vertical slice.
 
 ## Architecture
 
-Current and planned MVP flow:
+MVP flow:
 
 ```mermaid
 flowchart LR
     eventstreams["Wikimedia EventStreams\nRecentChanges"] --> ingestor["ingestor service\nhttpx-sse client"]
-    replay["planned replay JSONL\ndata/replay/"] -. "replay mode" .-> ingestor
+    replay["replay JSONL\ndata/replay/"] -. "replay mode" .-> ingestor
     ingestor --> rawtopic["Redpanda topic\nraw_recentchange"]
     rawtopic --> processor["processor service\nnormalize + aggregate"]
     processor --> snapshots["Parquet snapshots\ndata/snapshots/"]
@@ -67,7 +66,7 @@ Wikimedia EventStreams RecentChanges
   -> Streamlit dashboard at http://localhost:8501
 ```
 
-Replay mode will use the same processor/dashboard path, replacing the live EventStreams source with bundled JSONL records under `data/replay/`.
+Replay mode uses the same processor/dashboard path, replacing the live EventStreams source with bundled JSONL records under `data/replay/`.
 
 ### Main services
 
@@ -117,17 +116,23 @@ Expected live behavior within a few minutes:
 
 If snapshots do not exist yet, the dashboard should show an empty/no-data state while the ingestor and processor catch up.
 
-## Replay quickstart status
+## Replay quickstart
 
-Replay mode is part of the MVP design but is not implemented in the current completed slice. The planned reviewer command is:
+Start the local stack with bundled representative sample data:
 
 ```bash
 WIKISTREAM_MODE=replay docker compose up --build
 ```
 
-When implemented, replay mode will publish bundled representative events from `data/replay/recentchange_sample.jsonl`, label generated snapshots as `source_mode = replay`, and ensure dashboard freshness text does not present replayed data as current live Wikimedia activity.
+Replay mode publishes records from `data/replay/recentchange_sample.jsonl`, labels generated snapshots as `source_mode = replay`, and ensures dashboard freshness text does not present replayed data as current live Wikimedia activity.
 
-Until the replay implementation lands, use live mode for the runnable dashboard path.
+Expected replay behavior within 2 minutes:
+
+- dashboard mode is `replay`;
+- overview metrics populate from bundled sample records;
+- a domain-level bot spike signal appears for `example.wikipedia.org`;
+- replay data-quality snapshots contain 28 accepted records, 1 accepted missing-field record, and 2 malformed/rejected records;
+- freshness/status text states that replay data is demonstration/sample data, not current live Wikimedia activity.
 
 ## Dashboard guide
 
@@ -150,13 +155,13 @@ Shows:
 
 If no snapshots are available, the dashboard should remain usable and instruct the reviewer to start live ingestion or replay mode rather than failing with a raw error page.
 
+### Domain-level bot spike signal
+
+Shows domain-first bot activity spike signals using a current-vs-baseline comparison. Top contributing bot labels, when shown, are context only and are accompanied by limitation text.
+
 ### Planned MVP sections
 
-Later MVP phases will add:
-
-- domain-level bot spike signals using a current-vs-baseline comparison;
-- visible data-quality counts for malformed/rejected records and accepted records with missing fields;
-- clearer replay-specific dashboard behavior.
+Later MVP phases will add a fuller data-quality dashboard section for malformed/rejected records and accepted records with missing fields.
 
 ## Cleanup
 
@@ -166,7 +171,7 @@ Remove generated snapshots between local runs:
 rm -rf data/snapshots/*
 ```
 
-Do not delete bundled replay data under `data/replay/` once replay samples are added.
+Do not delete bundled replay data under `data/replay/`.
 
 To stop containers:
 
@@ -186,18 +191,18 @@ Copy or inspect `.env.example` for available settings. Important variables inclu
 
 | Variable | Purpose | Default |
 | --- | --- | --- |
-| `WIKISTREAM_MODE` | `live` or, once implemented, `replay` | `live` |
+| `WIKISTREAM_MODE` | `live` or `replay` | `live` |
 | `WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS` | Kafka/Redpanda bootstrap address inside Docker | `redpanda:9092` |
 | `WIKISTREAM_RAW_TOPIC` | Raw RecentChanges topic | `raw_recentchange` |
 | `WIKISTREAM_SNAPSHOT_PATH` | Container snapshot path | `/app/data/snapshots` |
-| `WIKISTREAM_REPLAY_PATH` | Planned replay JSONL path | `/app/data/replay/recentchange_sample.jsonl` |
+| `WIKISTREAM_REPLAY_PATH` | Replay JSONL path | `/app/data/replay/recentchange_sample.jsonl` |
 | `WIKISTREAM_USER_AGENT` | Descriptive User-Agent for Wikimedia live requests | `wikistream-observatory-local/0.1` |
 | `WIKISTREAM_FRESHNESS_SECONDS` | Live freshness threshold | `60` |
 | `WIKISTREAM_SNAPSHOT_INTERVAL_SECONDS` | Processor snapshot interval | `15` |
 | `WIKISTREAM_DASHBOARD_REFRESH_SECONDS` | Dashboard refresh/query target | `15` |
 | `WIKISTREAM_LIVE_RETENTION_HOURS` | Generated live snapshot retention target | `6` |
 
-Signal-related variables are reserved for the upcoming bot spike implementation: `WIKISTREAM_SIGNAL_CURRENT_WINDOW_MINUTES`, `WIKISTREAM_SIGNAL_BASELINE_WINDOW_MINUTES`, `WIKISTREAM_SIGNAL_THRESHOLD_RATIO`, `WIKISTREAM_SIGNAL_MIN_EVENTS`, and `WIKISTREAM_SIGNAL_TOP_BOTS_LIMIT`.
+Signal-related variables configure the bot spike implementation: `WIKISTREAM_SIGNAL_CURRENT_WINDOW_MINUTES`, `WIKISTREAM_SIGNAL_BASELINE_WINDOW_MINUTES`, `WIKISTREAM_SIGNAL_THRESHOLD_RATIO`, `WIKISTREAM_SIGNAL_MIN_EVENTS`, and `WIKISTREAM_SIGNAL_TOP_BOTS_LIMIT`.
 
 ## Wikimedia validation findings
 
@@ -217,10 +222,10 @@ Important limits:
 - The system is read-only and does not write to Wikimedia.
 - Metrics are derived from live or replayed RecentChanges events observed locally; they are not a historical backfill.
 - The `bot` field is a source-provided flag and should not be treated as a complete explanation of intent, risk, or legitimacy.
-- Missing or malformed fields may affect metrics until data-quality counters are fully implemented and visible.
-- Future bot spike output is domain-level context. Optional top contributing bot labels, if shown, are contextual and are not account-level accusations.
+- Missing or malformed fields may affect metrics; replay quality snapshots expose the bundled sample counts, and a fuller dashboard section is planned.
+- Bot spike output is domain-level context. Optional top contributing bot labels, if shown, are contextual and are not account-level accusations.
 - Stale live data must not be interpreted as current activity.
-- Replay data, once implemented, must be interpreted as demonstration data, not current Wikimedia activity.
+- Replay data must be interpreted as demonstration data, not current Wikimedia activity.
 
 Avoid interpreting this project as a moderation tool, abuse detector, replacement for Wikimedia review systems, or claim that an individual user or bot is doing something wrong. Stream-derived signals require contextual review.
 
