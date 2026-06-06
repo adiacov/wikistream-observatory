@@ -139,7 +139,7 @@
 
 - [X] T050 [US3] Create bundled representative JSONL sample with normal activity, a known bot spike, missing-field examples, and malformed/rejected examples in `data/replay/recentchange_sample.jsonl`
 - [X] T051 [US3] Implement replay reader and publisher preserving event order and labeling `source_mode=replay` in `services/ingestor/wikistream_ingestor/replay.py`
-- [ ] T052 [US3] Route ingestor startup between live EventStreams and replay publisher based on `WIKISTREAM_MODE` in `services/ingestor/wikistream_ingestor/main.py`
+- [X] T052 [US3] Route ingestor startup between live EventStreams and replay publisher based on `WIKISTREAM_MODE` in `services/ingestor/wikistream_ingestor/main.py`
 - [ ] T053 [US3] Ensure processor writes replay-labeled snapshots and flushes final replay snapshots at completion in `services/processor/wikistream_processor/main.py`
 - [ ] T054 [US3] Update dashboard freshness/status behavior so replay data is never presented as current live activity in `services/dashboard/app/main.py`
 - [ ] T055 [US3] Verify replay-mode quickstart and record expected sample outputs in `specs/001-wikistream-mvp-slice/quickstart.md`

@@ -101,13 +101,14 @@ def read_replay_records(path: str | Path, *, default_pacing_seconds: float = 0) 
                 )
 
 
-def replay_envelope(payload: dict[str, Any]) -> dict[str, Any]:
+def replay_envelope(payload: dict[str, Any] | None, **extra: Any) -> dict[str, Any]:
     """Create the Kafka envelope used by replay publication."""
 
     return {
         "source_mode": "replay",
         "ingested_at": utc_now().astimezone(timezone.utc).isoformat(),
         "payload": payload,
+        **extra,
     }
 
 
@@ -118,26 +119,47 @@ def publish_replay_records(
     topic: str,
     logger: Any | None = None,
     sleep_fn: Callable[[float], None] = time.sleep,
+    publish_rejected: bool = False,
 ) -> tuple[int, int]:
-    """Publish accepted replay records to Kafka in input order.
+    """Publish replay records to Kafka in input order.
 
-    Malformed/rejected lines are skipped here; later data-quality work will make
-    their counts visible. The return value is ``(published_count, skipped_count)``.
+    Malformed lines are skipped by default for unit use. In service replay mode,
+    ``publish_rejected=True`` publishes a valid JSON envelope containing the raw
+    line and parse error, so the processor can count rejected replay evidence
+    without putting invalid JSON on Kafka. The return value is
+    ``(published_count, skipped_count)``.
     """
 
     published_count = 0
     skipped_count = 0
     for record in records:
         if record.malformed or record.payload is None:
+            if not publish_rejected:
+                skipped_count += 1
+                if logger is not None:
+                    log_event(
+                        logger,
+                        "replay_record_skipped",
+                        "Skipped malformed replay record",
+                        line_number=record.line_number,
+                        error=record.error,
+                    )
+                continue
+            producer.produce(
+                topic,
+                key=f"replay-rejected-{record.line_number}",
+                value=encode_json_message(
+                    replay_envelope(
+                        None,
+                        replay_error=record.error,
+                        replay_line_number=record.line_number,
+                        replay_raw_line=record.raw_line,
+                    )
+                ),
+            )
+            producer.poll(0)
             skipped_count += 1
-            if logger is not None:
-                log_event(
-                    logger,
-                    "replay_record_skipped",
-                    "Skipped malformed replay record",
-                    line_number=record.line_number,
-                    error=record.error,
-                )
+            published_count += 1
             continue
 
         producer.produce(topic, key=_event_key(record.payload), value=encode_json_message(replay_envelope(record.payload)))
