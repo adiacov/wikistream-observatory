@@ -8,7 +8,7 @@ import streamlit as st
 
 from wikistream_observatory.config import load_config
 
-from app.data import bot_spike_empty_state, dashboard_status, load_bot_spike_signals, load_overview_metrics
+from app.data import bot_spike_empty_state, dashboard_status, load_bot_spike_signals, load_data_quality_counts, load_overview_metrics
 
 
 def _metric_rows(metrics: list[dict], metric_name: str) -> list[dict]:
@@ -150,6 +150,41 @@ def render_bot_spike_signals() -> None:
             )
 
 
+def render_data_quality() -> None:
+    config = load_config()
+    quality_rows = load_data_quality_counts(config.snapshots.path, source_mode=config.mode)
+
+    st.subheader("Data quality")
+    st.caption("Tracks accepted records, accepted records with missing expected fields, and malformed/rejected records separately.")
+
+    if not quality_rows:
+        st.info("No data-quality snapshots are available yet. Start live ingestion or replay mode and wait for the processor to write snapshots.")
+        return
+
+    latest = quality_rows[0]
+    cols = st.columns(4)
+    cols[0].metric("Accepted", int(latest.get("accepted_count") or 0))
+    cols[1].metric("Accepted with missing fields", int(latest.get("missing_field_count") or 0))
+    cols[2].metric("Malformed/rejected", int(latest.get("malformed_rejected_count") or 0))
+    cols[3].metric("Quality freshness", latest.get("freshness_status") or "unknown")
+
+    latest_observed = latest.get("latest_event_observed_at")
+    st.caption(
+        "Quality window: "
+        f"{_format_ts(latest.get('window_start'))} → {_format_ts(latest.get('window_end'))} · "
+        f"Latest observed event: {_format_ts(latest_observed)}"
+    )
+    st.write(
+        "Malformed/rejected records are excluded from metrics and signals because they cannot be normalized safely. "
+        "Accepted records with missing expected fields remain usable for supported metrics, but missing fields may limit downstream interpretation."
+    )
+    notes = latest.get("notes")
+    if notes:
+        st.caption(str(notes))
+    if config.mode == "replay":
+        st.info("Replay quality counts describe the bundled sample data, not current live Wikimedia activity.")
+
+
 def main() -> None:
     config = load_config()
     st.set_page_config(page_title="WikiStream Observatory", page_icon="🌊", layout="wide")
@@ -161,6 +196,7 @@ def main() -> None:
     render_mode_and_freshness()
     render_overview()
     render_bot_spike_signals()
+    render_data_quality()
 
     st.caption(f"Snapshot path: `{config.snapshots.path}` · Refresh interval target: {config.dashboard_refresh_seconds}s")
 
