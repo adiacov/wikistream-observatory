@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'USAGE'
+Usage: bin/wikistream-dev <command>
+
+Commands:
+  up               Start live mode with docker compose up --build
+  live             Alias for up
+  replay           Start replay mode with bundled sample data
+  down             Stop the compose stack
+  clean-snapshots  Remove generated snapshot files
+  test             Run the Python test suite with uv
+  help             Show this help
+USAGE
+}
+
+command="${1:-help}"
+shift || true
+
+case "$command" in
+  up|live)
+    docker compose up --build "$@"
+    ;;
+  replay)
+    WIKISTREAM_MODE=replay docker compose up --build "$@"
+    ;;
+  down)
+    docker compose down "$@"
+    ;;
+  clean-snapshots)
+    rm -rf data/snapshots/*
+    ;;
+  test)
+    PYTHONPATH=. uv run pytest "$@"
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    echo "Unknown command: $command" >&2
+    usage >&2
+    exit 2
+    ;;
+esac
