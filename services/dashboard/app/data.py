@@ -41,6 +41,17 @@ def load_bot_spike_signals(snapshot_path: Path | str, limit: int = 50, *, source
     return query_snapshot(snapshot_path, "bot_spike_signals", f"SELECT * FROM snapshot {where} ORDER BY computed_at DESC LIMIT {int(limit)}")
 
 
+def load_data_quality_counts(snapshot_path: Path | str, limit: int = 20, *, source_mode: str | None = None) -> list[dict[str, Any]]:
+    """Load latest data-quality count snapshots.
+
+    Missing quality snapshots are valid while the processor is starting; callers
+    should render an explanatory empty state.
+    """
+
+    where = _source_mode_where(source_mode)
+    return query_snapshot(snapshot_path, "data_quality_counts", f"SELECT * FROM snapshot {where} ORDER BY window_end DESC LIMIT {int(limit)}")
+
+
 def bot_spike_empty_state(
     *,
     current_window_minutes: int = 5,
