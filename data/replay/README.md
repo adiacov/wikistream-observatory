@@ -1,10 +1,10 @@
 # Replay sample data
 
-This directory is reserved for bundled replay data used to demonstrate WikiStream Observatory without waiting for interesting live Wikimedia stream conditions.
+This directory contains bundled replay data used to demonstrate WikiStream Observatory without waiting for interesting live Wikimedia stream conditions.
 
-Replay support is part of the MVP plan. The bundled JSONL sample has been added; the replay publisher and full Docker replay path are implemented in later tasks. This README documents the sample contract so reviewers can understand what the replay data is for and how it should be interpreted.
+Replay support is implemented for the MVP demo path. The ingestor can publish this JSONL sample in replay mode, the processor writes replay-labeled snapshots, and the dashboard identifies replay data as demonstration data rather than current live Wikimedia activity.
 
-## Planned file
+## File
 
 ```text
 data/replay/recentchange_sample.jsonl
@@ -88,15 +88,15 @@ Malformed/rejected counts and missing-field counts must remain separate:
 - malformed/rejected: invalid JSON or records missing required fields such as domain or event type;
 - missing-field: accepted records missing optional/expected fields such as bot flag, namespace, title, length, revision, patrol status, or usable event timestamp.
 
-## Validation path once replay is implemented
+## Validation path
 
-Planned command:
+Command:
 
 ```bash
 WIKISTREAM_MODE=replay docker compose up --build
 ```
 
-Expected dashboard behavior once replay tasks are complete:
+Expected dashboard behavior:
 
 - mode is shown as `replay`;
 - overview metrics populate from bundled sample records;

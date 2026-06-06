@@ -61,6 +61,32 @@ Host Python did not have `pytest` installed during this validation, so pytest ex
    - at least one domain-level bot spike signal appears for the expected sample domain;
    - freshness/status areas clearly state that the data is replayed, not current live activity.
 
+### Phase 6 replay validation note
+
+Validation date: 2026-06-06.
+
+Replay mode was validated with the documented quickstart path and a short snapshot inspection script:
+
+```bash
+WIKISTREAM_MODE=replay WIKISTREAM_SNAPSHOT_INTERVAL_SECONDS=2 docker compose up --build -d
+```
+
+Validation used `docker compose down -v` before replay to avoid stale Redpanda topic data from previous runs while preserving Docker images/build cache. Generated snapshots were cleaned via a short `busybox:1.36` container because earlier container runs can leave root-owned files under `data/snapshots/`. The Docker build reused uv dependency layers (`uv sync --frozen --no-dev --no-install-project` was cached); only project/source install layers rebuilt after code changes.
+
+Observed outputs within 45 seconds:
+
+| Dataset/check | Observed result |
+| --- | --- |
+| `normalized_events` snapshots | Present, replay-labeled |
+| `activity_metrics` snapshots | Present; 18 replay overview metric rows loaded |
+| `bot_spike_signals` snapshots | Present; signal for `example.wikipedia.org` with 20 current bot events and `source_mode = replay` |
+| `data_quality_counts` snapshots | Present; `accepted_count = 28`, `missing_field_count = 1`, `malformed_rejected_count = 2`, `freshness_status = replay` |
+| Dashboard status helper | `source_mode = replay`, latest observed timestamp populated, `freshness_status = replay` |
+
+Known remaining limits:
+- The fuller data-quality dashboard section is still Phase 7 work; Phase 6 writes replay quality snapshots and validates their expected counts.
+- Replay validation was inspected through snapshot/dashboard helper outputs rather than a browser screenshot.
+
 ## Bot spike signal validation
 
 Use either live data with a natural spike or bundled replay data with the known spike.
@@ -110,8 +136,7 @@ docker compose config
 Additional fixture/dashboard smoke checks confirmed `tests/fixtures/bot_spike_signals.parquet` contains the expected domain, count, ratio, threshold, wording, and limitation fields.
 
 Known remaining limits:
-- This validates the signal implementation and dashboard contract using fixtures/smoke checks; full replay-mode dashboard observation remains for Phase 6 replay tasks.
-- Replay mode is still planned for Phase 6, so deterministic end-to-end replay display is not available yet.
+- This validates the signal implementation and dashboard contract using fixtures/smoke checks; deterministic end-to-end replay display is validated in the Phase 6 replay validation note above.
 
 ## Recovery and cleanup validation
 
@@ -180,7 +205,7 @@ Reviewer-facing documentation was manually audited against FR-015 and SC-009 aft
 | MVP scope/current status | PASS | `README.md` separates the current completed live overview slice from specified but not-yet-implemented replay, bot spike, and data-quality counters. |
 | Local run path | PASS | `README.md` documents `docker compose up --build`. |
 | Dashboard usage | PASS | `README.md` documents mode/freshness, overview metrics, empty states, and planned sections. |
-| Replay mode | PASS | `README.md`, `.env.example`, and `data/replay/README.md` document replay as planned/not yet implemented and require replay data not be shown as current live activity. |
+| Replay mode | PASS | At the time of the Phase 4 audit, `README.md`, `.env.example`, and `data/replay/README.md` documented replay as planned/not yet implemented and required replay data not be shown as current live activity. Later Phase 6 notes above validate implemented replay behavior. |
 | Data-quality behavior | PASS | `README.md` documents current limitations; `data/replay/README.md` defines separate malformed/rejected and missing-field expected counts for future replay samples. |
 | Responsible-use boundaries | PASS | Docs state read-only use, observability framing, no enforcement decisions, and no account-level accusations. |
 | Known limitations | PASS | `README.md` includes a dedicated responsible-use and limitations section. |
@@ -188,6 +213,5 @@ Reviewer-facing documentation was manually audited against FR-015 and SC-009 aft
 | Cleanup command | PASS | `README.md` documents `rm -rf data/snapshots/*` and `docker compose down`. |
 
 Gaps intentionally left for later phases:
-- replay sample concrete expected domain and counts remain `TBD` until T050 creates `data/replay/recentchange_sample.jsonl`;
-- bot spike and data-quality dashboard sections remain planned until their implementation phases land;
-- T038 validates documentation coverage, not end-to-end replay behavior.
+- a fuller data-quality dashboard section remains planned for Phase 7;
+- T038 was a documentation audit at the time it ran; later Phase 5/6 validation notes above cover bot spike and replay behavior.
