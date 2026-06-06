@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
 
 from wikistream_observatory.models import NormalizedRecentChangeEvent
 from wikistream_observatory.signals import detect_bot_spikes
@@ -65,6 +66,29 @@ def test_bot_spike_limitations_state_no_enforcement_or_account_accusation():
     assert "not an enforcement decision" in limitations
     assert "not" in limitations and "account-level accusation" in limitations
     assert "context" in limitations or "contextual" in limitations
+
+
+def test_readme_and_dashboard_avoid_accusation_or_conduct_conclusion_terms():
+    user_facing_text = "\n".join(
+        [
+            Path("README.md").read_text(encoding="utf-8"),
+            Path("services/dashboard/app/main.py").read_text(encoding="utf-8"),
+        ]
+    ).lower()
+
+    forbidden_terms = (
+        "bad bot",
+        "malicious",
+        "guilty",
+        "abusive",
+        "culprit",
+        "offender",
+        "abuse detector",
+        "proof of misuse",
+        "doing something wrong",
+    )
+    for term in forbidden_terms:
+        assert term not in user_facing_text
 
 
 def test_wording_is_domain_first_even_when_top_bot_labels_are_present():

@@ -34,10 +34,7 @@ The current completed slice supports:
 - empty-state handling for missing snapshots;
 - local Docker Compose execution.
 
-Still planned for later MVP phases:
-
-- Makefile/development helper commands;
-- throughput/restart/idempotence validation tasks.
+Current polish coverage includes local helper commands, Docker build-cache guidance, replay/live quickstart validation, throughput validation, malformed/missing-field coverage validation, and restart/idempotence validation.
 
 ## Architecture
 
@@ -221,13 +218,13 @@ Validation recorded on 2026-06-05 in `specs/001-wikistream-mvp-slice/research.md
 
 ## Responsible use and limitations
 
-WikiStream Observatory presents observability signals, not proof of misuse.
+WikiStream Observatory presents observability signals, not conclusions about user intent or conduct.
 
 Important limits:
 
 - The system is read-only and does not write to Wikimedia.
 - Metrics are derived from live or replayed RecentChanges events observed locally; they are not a historical backfill.
-- The `bot` field is a source-provided flag and should not be treated as a complete explanation of intent, risk, or legitimacy.
+- The `bot` field is a source-provided flag and should not be treated as a complete explanation of intent, context, or appropriateness.
 - Malformed/rejected records are counted separately and excluded from normalized metrics/signals because required fields cannot be trusted.
 - Accepted records with missing expected fields are counted separately; they may still support event volume/domain/type metrics, but missing fields can affect bot share, review-workload proxies, and future derived signals.
 - Timestamp fallback records use local observed time for windowing, so their event-time placement is approximate.
@@ -235,7 +232,7 @@ Important limits:
 - Stale live data must not be interpreted as current activity.
 - Replay data must be interpreted as demonstration data, not current Wikimedia activity.
 
-Avoid interpreting this project as a moderation tool, abuse detector, replacement for Wikimedia review systems, or claim that an individual user or bot is doing something wrong. Stream-derived signals require contextual review.
+Avoid interpreting this project as a moderation tool, a replacement for Wikimedia review systems, or a conclusion about an individual user or bot. Stream-derived signals require contextual review.
 
 ## Development checks
 

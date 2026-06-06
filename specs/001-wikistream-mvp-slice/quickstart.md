@@ -340,6 +340,21 @@ Reviewer-facing documentation was manually audited against FR-015 and SC-009 aft
 | Dashboard URL and local ports | PASS | `README.md` and `.env.example` document `http://localhost:8501` and Redpanda host debug port `localhost:19092`. |
 | Cleanup command | PASS | `README.md` documents `rm -rf data/snapshots/*` and `docker compose down`. |
 
+### Phase 8 responsible wording audit note
+
+Validation date: 2026-06-06.
+
+T070 reviewed `README.md` and `services/dashboard/app/main.py` for responsible-observability wording. Public README wording was softened to avoid conduct-conclusion phrases such as `proof of misuse`, `abuse detector`, and `doing something wrong`; stale implementation-status text was also updated to reflect completed helper, throughput, data-quality coverage, and restart/idempotence validation work. Dashboard text already used signal/demo/context wording and did not require code changes.
+
+Regression coverage was added to `tests/unit/test_responsible_language.py` to scan README and dashboard text for accusation-oriented phrases while preserving required limitation language such as `not an enforcement decision` and `not an account-level accusation` in signal outputs.
+
+Validation commands:
+
+```bash
+rg -n -i "abuse detector|proof of misuse|doing something wrong|bad bot|malicious|guilty|abusive|culprit|offender|misuse|legitimacy|risk" README.md services/dashboard/app/main.py
+PYTHONPATH=. uv run pytest tests/unit/test_responsible_language.py
+```
+
 Gaps intentionally left for later phases:
 - a fuller data-quality dashboard section remains planned for Phase 7;
 - T038 was a documentation audit at the time it ran; later Phase 5/6 validation notes above cover bot spike and replay behavior.
