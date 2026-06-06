@@ -1,4 +1,4 @@
-"""Ingestor service entry point for live Wikimedia RecentChanges."""
+"""Ingestor service entry point for live or replay Wikimedia RecentChanges."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from wikistream_observatory.logging import configure_logging, log_event
 from wikistream_observatory.time_utils import utc_now
 
 from wikistream_ingestor.eventstreams import recentchange_events
+from wikistream_ingestor.replay import publish_replay_records, read_replay_records
 
 
 def event_key(payload: dict[str, Any]) -> str | None:
@@ -44,8 +45,6 @@ def publish_payload(producer: Any, topic: str, payload: dict[str, Any], *, sourc
 def run_live() -> None:
     config = load_config()
     logger = configure_logging("ingestor", config.mode)
-    if config.mode != "live":
-        raise NotImplementedError("Replay mode is implemented in a later phase")
 
     wait_for_broker(config.kafka.bootstrap_servers)
     producer = create_producer(config.kafka.bootstrap_servers)
@@ -60,8 +59,42 @@ def run_live() -> None:
             log_event(logger, "events_published", "Published RecentChanges events", count=count, topic=config.kafka.raw_topic)
 
 
+def run_replay() -> None:
+    config = load_config()
+    logger = configure_logging("ingestor", config.mode)
+
+    wait_for_broker(config.kafka.bootstrap_servers)
+    producer = create_producer(config.kafka.bootstrap_servers)
+    log_event(
+        logger,
+        "replay_started",
+        "Starting replay RecentChanges publication",
+        topic=config.kafka.raw_topic,
+        replay_path=str(config.replay_path),
+    )
+    published_count, skipped_count = publish_replay_records(
+        read_replay_records(config.replay_path),
+        producer=producer,
+        topic=config.kafka.raw_topic,
+        logger=logger,
+        publish_rejected=True,
+    )
+    log_event(
+        logger,
+        "replay_completed",
+        "Completed replay RecentChanges publication",
+        topic=config.kafka.raw_topic,
+        published_count=published_count,
+        skipped_count=skipped_count,
+    )
+
+
 def main() -> None:
-    run_live()
+    config = load_config()
+    if config.mode == "replay":
+        run_replay()
+    else:
+        run_live()
 
 
 if __name__ == "__main__":
