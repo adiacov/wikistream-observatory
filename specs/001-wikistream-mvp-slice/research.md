@@ -20,7 +20,7 @@ Validation date: 2026-06-05.
 ## Redpanda as Kafka-compatible broker
 
 - **Decision**: Use a single-node Redpanda container as the local Kafka-compatible broker.
-- **Rationale**: Redpanda provides Kafka APIs with simpler local Docker operation than a full Kafka/ZooKeeper stack, supporting the portfolio goal of a realistic but runnable pipeline.
+- **Rationale**: Redpanda provides Kafka APIs with simpler local Docker operation than a full Kafka/ZooKeeper stack, supporting the project goal of a realistic but runnable pipeline.
 - **Alternatives considered**: Apache Kafka was rejected for heavier local orchestration. In-process queues were rejected because the spec requires Kafka-compatible streaming architecture.
 
 ## Python service implementation
@@ -44,7 +44,7 @@ Validation date: 2026-06-05.
 ## Replay/sample data
 
 - **Decision**: Bundle a small JSONL replay sample derived from representative public RecentChanges-like events, including normal activity, missing-field examples, malformed/rejected examples, and a known domain-level bot spike.
-- **Rationale**: Reviewers can validate dashboard behavior without waiting for live stream conditions. JSONL is easy to inspect and stream through the same normalization and processing path.
+- **Rationale**: Users can validate dashboard behavior without waiting for live stream conditions. JSONL is easy to inspect and stream through the same normalization and processing path.
 - **Alternatives considered**: Large captured datasets were rejected to keep the repo lightweight. Synthetic-only data was rejected because representative public-data shape is more credible.
 
 ## Data-quality categories

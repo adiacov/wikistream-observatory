@@ -1,6 +1,6 @@
 # Quickstart Validation Guide: WikiStream MVP Vertical Slice
 
-This guide defines expected reviewer validation scenarios. Implementation happens later in `tasks.md` and code.
+This guide defines expected local validation scenarios. Implementation happens later in `tasks.md` and code.
 
 ## Prerequisites
 
@@ -309,7 +309,7 @@ Expected tested areas:
 
 ## Documentation validation
 
-A first-time reviewer should be able to read `README.md` and identify within 10 minutes:
+A first-time user should be able to read `README.md` and identify within 10 minutes:
 - project purpose and problem framing;
 - local quickstart path;
 - dashboard usage;
@@ -323,7 +323,7 @@ A first-time reviewer should be able to read `README.md` and identify within 10 
 
 Validation date: 2026-06-05.
 
-Reviewer-facing documentation was manually audited against FR-015 and SC-009 after T034-T037. The audit checked `README.md`, `.env.example`, and `data/replay/README.md` rather than using brittle README unit tests.
+User-facing documentation was manually audited against FR-015 and SC-009 after T034-T037. The audit checked `README.md`, `.env.example`, and `data/replay/README.md` rather than using brittle README unit tests.
 
 | Requirement area | Status | Evidence |
 | --- | --- | --- |
