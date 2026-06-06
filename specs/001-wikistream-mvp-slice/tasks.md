@@ -181,7 +181,7 @@
 - [X] T066 Run Docker Compose replay quickstart validation and fix discovered issues in `data/replay/recentchange_sample.jsonl`
 - [X] T067 Validate the MVP processes at least 300 RecentChanges events per minute with bounded memory and summarized dashboard output using replay or synthetic fixtures in `tests/integration/test_throughput.py`
 - [X] T068 Assert at least 95% handling/rejection coverage for intentionally malformed or missing-field replay fixtures in `tests/integration/test_replay_pipeline.py`
-- [ ] T069 Validate restart/idempotence behavior by rerunning replay or restarting processor and checking deterministic event IDs prevent unsafe duplicate metrics/signals in `tests/integration/test_restart_idempotence.py`
+- [X] T069 Validate restart/idempotence behavior by rerunning replay or restarting processor and checking deterministic event IDs prevent unsafe duplicate metrics/signals in `tests/integration/test_restart_idempotence.py`
 - [ ] T070 Review all user-facing text for responsible-observability wording and remove accusation-oriented language in `README.md` and `services/dashboard/app/main.py`
 - [ ] T071 Update project state after implementation readiness in `STATE.md`
 
