@@ -92,10 +92,16 @@ Expected local ports:
 
 ## Live quickstart
 
-Start the local stack:
+Build the local service images when dependencies or Docker files change:
 
 ```bash
-docker compose up --build
+docker compose build
+```
+
+Start the local stack. On later runs, this reuses the already-built local images instead of forcing a rebuild:
+
+```bash
+docker compose up
 ```
 
 Open the dashboard:
@@ -121,10 +127,10 @@ If snapshots do not exist yet, the dashboard should show an empty/no-data state 
 Start the local stack with bundled representative sample data:
 
 ```bash
-WIKISTREAM_MODE=replay docker compose up --build
+WIKISTREAM_MODE=replay docker compose up
 ```
 
-Replay mode publishes records from `data/replay/recentchange_sample.jsonl`, labels generated snapshots as `source_mode = replay`, and ensures dashboard freshness text does not present replayed data as current live Wikimedia activity.
+Replay mode uses the same local images built for live mode. It publishes records from `data/replay/recentchange_sample.jsonl`, labels generated snapshots as `source_mode = replay`, and ensures dashboard freshness text does not present replayed data as current live Wikimedia activity.
 
 Expected replay behavior within 2 minutes:
 
@@ -249,4 +255,17 @@ Docker configuration can be checked with:
 
 ```bash
 docker compose config
+```
+
+## Docker build/cache notes
+
+To avoid repeated dependency downloads, the Compose stack builds explicit local images tagged `wikistream-observatory/*:local` from a shared multi-target Dockerfile. Python dependencies are installed in one shared dependency stage and reused by ingestor, processor, and dashboard images.
+
+Use `docker compose up` for normal local runs. Use `docker compose build` only after dependency, Dockerfile, or source changes require a rebuild. Avoid `docker compose up --build` for everyday use because it forces Compose to evaluate rebuilds every time.
+
+After many rebuilds, Docker may keep old dangling image layers. You can inspect or remove them with:
+
+```bash
+docker images --filter dangling=true
+docker image prune
 ```

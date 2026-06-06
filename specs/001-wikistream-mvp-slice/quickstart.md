@@ -48,7 +48,8 @@ curl -fsS http://localhost:8501
 1. Start the local stack:
 
    ```bash
-   docker compose up --build
+   docker compose build
+   docker compose up
    ```
 
 2. Open the dashboard:
@@ -75,7 +76,8 @@ curl -fsS http://localhost:8501
 1. Start the local stack in replay mode using the implemented project command or environment variable, for example:
 
    ```bash
-   WIKISTREAM_MODE=replay docker compose up --build
+   docker compose build
+   WIKISTREAM_MODE=replay docker compose up
    ```
 
 2. Open the dashboard at `http://localhost:8501`.
@@ -228,7 +230,7 @@ Reviewer-facing documentation was manually audited against FR-015 and SC-009 aft
 | Problem framing | PASS | `README.md` "Why this exists" explains cross-wiki activity, automation context, and the value of summarizing the raw stream. |
 | Observability solution | PASS | `README.md` describes normalized facts, windowed metrics, snapshots, and dashboard signals. |
 | MVP scope/current status | PASS | `README.md` separates the current completed live overview slice from specified but not-yet-implemented replay, bot spike, and data-quality counters. |
-| Local run path | PASS | `README.md` documents `docker compose up --build`. |
+| Local run path | PASS | `README.md` documents `docker compose build` for explicit rebuilds and `docker compose up` for normal reuse of local images. |
 | Dashboard usage | PASS | `README.md` documents mode/freshness, overview metrics, empty states, and planned sections. |
 | Replay mode | PASS | At the time of the Phase 4 audit, `README.md`, `.env.example`, and `data/replay/README.md` documented replay as planned/not yet implemented and required replay data not be shown as current live activity. Later Phase 6 notes above validate implemented replay behavior. |
 | Data-quality behavior | PASS | `README.md` documents current limitations; `data/replay/README.md` defines separate malformed/rejected and missing-field expected counts for future replay samples. |

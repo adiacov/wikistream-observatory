@@ -1,3 +1,7 @@
+x-service-build: &service-build
+  context: .
+  dockerfile: services/Dockerfile
+
 services:
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
@@ -24,9 +28,10 @@ services:
       start_period: 20s
 
   ingestor:
+    image: wikistream-observatory/ingestor:local
     build:
-      context: .
-      dockerfile: services/ingestor/Dockerfile
+      <<: *service-build
+      target: ingestor
     environment:
       WIKISTREAM_MODE: ${WIKISTREAM_MODE:-live}
       WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS: ${WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS:-redpanda:9092}
@@ -40,9 +45,10 @@ services:
         condition: service_healthy
 
   processor:
+    image: wikistream-observatory/processor:local
     build:
-      context: .
-      dockerfile: services/processor/Dockerfile
+      <<: *service-build
+      target: processor
     environment:
       WIKISTREAM_MODE: ${WIKISTREAM_MODE:-live}
       WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS: ${WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS:-redpanda:9092}
@@ -59,9 +65,10 @@ services:
         condition: service_healthy
 
   dashboard:
+    image: wikistream-observatory/dashboard:local
     build:
-      context: .
-      dockerfile: services/dashboard/Dockerfile
+      <<: *service-build
+      target: dashboard
     environment:
       WIKISTREAM_MODE: ${WIKISTREAM_MODE:-live}
       WIKISTREAM_SNAPSHOT_PATH: ${WIKISTREAM_SNAPSHOT_PATH:-/app/data/snapshots}
