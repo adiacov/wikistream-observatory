@@ -28,16 +28,16 @@ The current completed slice supports:
 - RecentChanges normalization for required dashboard fields;
 - 1-minute activity metrics;
 - domain-level bot spike signal snapshots and dashboard section;
-- replay data-quality snapshot counts for the bundled malformed/rejected and missing-field examples;
+- data-quality snapshot counts for accepted, accepted-with-missing-fields, and malformed/rejected records;
 - Parquet snapshots queried through DuckDB helpers;
-- a Streamlit dashboard showing mode, freshness, event volume, top domains, event types, bot/non-bot share, and bot spike signals;
+- a Streamlit dashboard showing mode, freshness, event volume, top domains, event types, bot/non-bot share, bot spike signals, and data-quality counts;
 - empty-state handling for missing snapshots;
 - local Docker Compose execution.
 
 Still planned for later MVP phases:
 
-- fuller live data-quality dashboard section and freshness classification tests;
-- Makefile/development helper commands.
+- Makefile/development helper commands;
+- throughput/restart/idempotence validation tasks.
 
 ## Architecture
 
@@ -159,9 +159,9 @@ If no snapshots are available, the dashboard should remain usable and instruct t
 
 Shows domain-first bot activity spike signals using a current-vs-baseline comparison. Top contributing bot labels, when shown, are context only and are accompanied by limitation text.
 
-### Planned MVP sections
+### Data quality
 
-Later MVP phases will add a fuller data-quality dashboard section for malformed/rejected records and accepted records with missing fields.
+Shows accepted records, accepted records with missing expected fields, malformed/rejected records, and quality freshness. Malformed/rejected records are excluded from metrics and signals because they cannot be normalized safely. Accepted records with missing expected fields remain usable for supported metrics, but missing fields may limit downstream interpretation.
 
 ## Cleanup
 
@@ -222,8 +222,10 @@ Important limits:
 - The system is read-only and does not write to Wikimedia.
 - Metrics are derived from live or replayed RecentChanges events observed locally; they are not a historical backfill.
 - The `bot` field is a source-provided flag and should not be treated as a complete explanation of intent, risk, or legitimacy.
-- Missing or malformed fields may affect metrics; replay quality snapshots expose the bundled sample counts, and a fuller dashboard section is planned.
-- Bot spike output is domain-level context. Optional top contributing bot labels, if shown, are contextual and are not account-level accusations.
+- Malformed/rejected records are counted separately and excluded from normalized metrics/signals because required fields cannot be trusted.
+- Accepted records with missing expected fields are counted separately; they may still support event volume/domain/type metrics, but missing fields can affect bot share, review-workload proxies, and future derived signals.
+- Timestamp fallback records use local observed time for windowing, so their event-time placement is approximate.
+- Bot spike output is a derived, domain-level observability signal based on source-provided bot flags and recent baselines. Optional top contributing bot labels, if shown, are contextual and are not account-level accusations.
 - Stale live data must not be interpreted as current activity.
 - Replay data must be interpreted as demonstration data, not current Wikimedia activity.
 
