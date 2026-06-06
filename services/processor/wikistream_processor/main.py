@@ -12,7 +12,7 @@ from wikistream_observatory.config import load_config
 from wikistream_observatory.kafka import create_consumer, decode_json_message, wait_for_broker
 from wikistream_observatory.logging import configure_logging, log_event
 from wikistream_observatory.models import ActivityMetric, BotSpikeSignal, DataQualityCount, NormalizedRecentChangeEvent
-from wikistream_observatory.normalization import normalize_recentchange
+from wikistream_observatory.quality import classify_raw_event, summarize_quality_counts
 from wikistream_observatory.signals import detect_bot_spikes
 from wikistream_observatory.storage import remove_live_snapshots_older_than, write_parquet_snapshot
 from wikistream_observatory.time_utils import ensure_utc, floor_to_bucket, parse_event_timestamp, utc_now
@@ -32,40 +32,6 @@ def _observed_at_from_raw(raw: dict[str, Any], fallback: datetime) -> datetime:
     return ensure_utc(parsed or fallback)
 
 
-def _source_mode_for_quality(raw_messages: list[dict[str, Any]], normalized: list[NormalizedRecentChangeEvent]) -> str:
-    if normalized:
-        return normalized[0].source_mode
-    if any(str(raw.get("source_mode", "")).lower() == "replay" for raw in raw_messages):
-        return "replay"
-    return "live"
-
-
-def _quality_counts(
-    raw_messages: list[dict[str, Any]],
-    normalized: list[NormalizedRecentChangeEvent],
-    *,
-    malformed_rejected_count: int,
-    missing_field_count: int,
-    observed_at: datetime,
-) -> DataQualityCount:
-    event_times = [ensure_utc(event.event_ts) for event in normalized]
-    observed_times = [ensure_utc(event.observed_at) for event in normalized]
-    window_start = min(event_times) if event_times else observed_at
-    window_end = max(event_times) if event_times else observed_at
-    source_mode = _source_mode_for_quality(raw_messages, normalized)
-    return DataQualityCount(
-        window_start=window_start,
-        window_end=window_end,
-        source_mode=source_mode,  # type: ignore[arg-type]
-        malformed_rejected_count=malformed_rejected_count,
-        missing_field_count=missing_field_count,
-        accepted_count=len(normalized),
-        latest_event_observed_at=max(observed_times) if observed_times else None,
-        freshness_status="replay" if source_mode == "replay" else "fresh",
-        notes="Replay batch quality counts include malformed replay records and records rejected during normalization.",
-    )
-
-
 def process_raw_messages(
     raw_messages: Iterable[dict[str, Any]],
     *,
@@ -77,29 +43,14 @@ def process_raw_messages(
     threshold_ratio: float = 3.0,
     min_current_events: int = 20,
     top_bots_limit: int = 3,
+    freshness_seconds: int = 60,
 ) -> ProcessorBatchResult:
     """Normalize raw messages and compute metrics, signals, and quality counts."""
 
     fallback_observed_at = ensure_utc(observed_at or utc_now())
     raw_list = list(raw_messages)
-    normalized: list[NormalizedRecentChangeEvent] = []
-    malformed_rejected_count = 0
-    missing_field_count = 0
-    for raw in raw_list:
-        if raw.get("replay_error"):
-            malformed_rejected_count += 1
-            continue
-        try:
-            event = normalize_recentchange(raw, observed_at=_observed_at_from_raw(raw, fallback_observed_at))
-        except ValueError:
-            malformed_rejected_count += 1
-            continue
-        normalized.append(event)
-        # Phase 6 tracks the replay sample's accepted missing-field example. The
-        # fuller Phase 7 data-quality implementation expands this to all expected
-        # missing optional fields and timestamp issues.
-        if "bot" in event.missing_fields:
-            missing_field_count += 1
+    classifications = [classify_raw_event(raw, observed_at=_observed_at_from_raw(raw, fallback_observed_at)) for raw in raw_list]
+    normalized = [classification.event for classification in classifications if classification.event is not None]
 
     metrics = compute_activity_metrics(normalized, computed_at=fallback_observed_at)
     signal_events = signal_history if signal_history is not None and signal_history else normalized
@@ -124,12 +75,11 @@ def process_raw_messages(
         normalized_events=normalized,
         activity_metrics=metrics,
         bot_spike_signals=signals,
-        quality_counts=_quality_counts(
-            raw_list,
-            normalized,
-            malformed_rejected_count=malformed_rejected_count,
-            missing_field_count=missing_field_count,
-            observed_at=fallback_observed_at,
+        quality_counts=summarize_quality_counts(
+            classifications,
+            source_mode=normalized[0].source_mode if normalized else ("replay" if any(str(raw.get("source_mode", "")).lower() == "replay" for raw in raw_list) else "live"),
+            freshness_seconds=freshness_seconds,
+            now=fallback_observed_at,
         ),
     )
 
@@ -262,6 +212,7 @@ def run_processor() -> None:
                     threshold_ratio=config.signals.threshold_ratio,
                     min_current_events=config.signals.min_events,
                     top_bots_limit=config.signals.top_bots_limit,
+                    freshness_seconds=config.freshness_seconds,
                 )
                 write_processor_snapshots(
                     str(config.snapshots.path),
