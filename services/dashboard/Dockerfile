@@ -7,18 +7,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app/services/dashboard:/app/src \
     STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
     STREAMLIT_SERVER_PORT=8501 \
-    UV_CACHE_DIR=/tmp/uv-cache
+    UV_CACHE_DIR=/tmp/uv-cache \
+    UV_PROJECT_ENVIRONMENT=/usr/local \
+    UV_COMPILE_BYTECODE=1
 
 WORKDIR /app
 
 COPY pyproject.toml uv.lock README.md* ./
+RUN uv sync --frozen --no-dev --no-install-project
+
 COPY src ./src
 COPY services/dashboard ./services/dashboard
 
-RUN uv export --frozen --no-dev --no-emit-project --format requirements.txt --output-file /tmp/requirements.txt >/dev/null \
-    && uv pip install --system --no-cache -r /tmp/requirements.txt \
-    && uv pip install --system --no-cache --no-deps -e . \
-    && rm -rf /tmp/requirements.txt /tmp/uv-cache \
+RUN uv sync --frozen --no-dev --no-editable \
+    && rm -rf /tmp/uv-cache \
     && rm -f /usr/local/bin/uv /usr/local/bin/uvx
 
 EXPOSE 8501
