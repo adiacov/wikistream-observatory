@@ -6,11 +6,13 @@ usage() {
 Usage: bin/wikistream-dev <command>
 
 Commands:
-  up               Start live mode with docker compose up --build
+  build            Build or rebuild local service images explicitly
+  up               Start live mode, building only if images are missing
   live             Alias for up
   replay           Start replay mode with bundled sample data
   down             Stop the compose stack
   clean-snapshots  Remove generated snapshot files
+  prune-images     Remove dangling Docker images after repeated rebuilds
   test             Run the Python test suite with uv
   help             Show this help
 USAGE
@@ -20,17 +22,23 @@ command="${1:-help}"
 shift || true
 
 case "$command" in
+  build)
+    docker compose build "$@"
+    ;;
   up|live)
-    docker compose up --build "$@"
+    docker compose up "$@"
     ;;
   replay)
-    WIKISTREAM_MODE=replay docker compose up --build "$@"
+    WIKISTREAM_MODE=replay docker compose up "$@"
     ;;
   down)
     docker compose down "$@"
     ;;
   clean-snapshots)
     rm -rf data/snapshots/*
+    ;;
+  prune-images)
+    docker image prune "$@"
     ;;
   test)
     PYTHONPATH=. uv run pytest "$@"
