@@ -74,7 +74,7 @@ Replay mode uses the same processor/dashboard path, replacing the live EventStre
 
 ### Local storage
 
-Generated analytical data is written under `data/snapshots/`. These files are runtime artifacts and are excluded from git.
+Generated analytical data is written under `data/snapshots/`. These files are runtime artifacts and are excluded from git. In local development, app containers run as your host UID/GID so generated snapshot files remain removable/editable by your normal user instead of becoming root-owned Docker artifacts.
 
 ## Prerequisites
 
@@ -98,7 +98,13 @@ docker compose build
 Start the local stack. On later runs, this reuses the already-built local images instead of forcing a rebuild:
 
 ```bash
-docker compose up
+make up
+```
+
+Equivalent direct Compose command if you are not using `make`:
+
+```bash
+HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose up
 ```
 
 Open the dashboard:
@@ -124,7 +130,13 @@ If snapshots do not exist yet, the dashboard should show an empty/no-data state 
 Start the local stack with bundled representative sample data:
 
 ```bash
-WIKISTREAM_MODE=replay docker compose up
+make replay
+```
+
+Equivalent direct Compose command if you are not using `make`:
+
+```bash
+HOST_UID=$(id -u) HOST_GID=$(id -g) WIKISTREAM_MODE=replay docker compose up
 ```
 
 Replay mode uses the same local images built for live mode. It publishes records from `data/replay/recentchange_sample.jsonl`, labels generated snapshots as `source_mode = replay`, and ensures dashboard freshness text does not present replayed data as current live Wikimedia activity.
@@ -171,10 +183,10 @@ Shows accepted records, accepted records with missing expected fields, malformed
 Remove generated snapshots between local runs:
 
 ```bash
-rm -rf data/snapshots/*
+make clean-snapshots
 ```
 
-Do not delete bundled replay data under `data/replay/`.
+This uses a tiny Docker cleanup container so it can remove both new host-owned snapshots and older root-owned snapshots from previous runs. Do not delete bundled replay data under `data/replay/`.
 
 To stop containers:
 
@@ -195,6 +207,8 @@ Copy or inspect `.env.example` for available settings. Important variables inclu
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `WIKISTREAM_MODE` | `live` or `replay` | `live` |
+| `HOST_UID` | Host user id used for app containers writing bind-mounted files | `1000` |
+| `HOST_GID` | Host group id used for app containers writing bind-mounted files | `1000` |
 | `WIKISTREAM_KAFKA_BOOTSTRAP_SERVERS` | Kafka/Redpanda bootstrap address inside Docker | `redpanda:9092` |
 | `WIKISTREAM_RAW_TOPIC` | Raw RecentChanges topic | `raw_recentchange` |
 | `WIKISTREAM_SNAPSHOT_PATH` | Container snapshot path | `/app/data/snapshots` |

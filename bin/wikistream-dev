@@ -21,6 +21,9 @@ USAGE
 command="${1:-help}"
 shift || true
 
+export HOST_UID="${HOST_UID:-$(id -u)}"
+export HOST_GID="${HOST_GID:-$(id -g)}"
+
 case "$command" in
   build)
     docker compose build "$@"
@@ -35,7 +38,8 @@ case "$command" in
     docker compose down "$@"
     ;;
   clean-snapshots)
-    rm -rf data/snapshots/*
+    mkdir -p data/snapshots
+    docker run --rm -v "$PWD/data/snapshots:/snapshots" busybox sh -c 'rm -rf /snapshots/*'
     ;;
   prune-images)
     docker image prune "$@"
