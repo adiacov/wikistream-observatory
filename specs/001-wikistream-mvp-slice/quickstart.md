@@ -20,6 +20,31 @@ Phase 3 live-mode startup smoke was run with Docker Compose after building servi
 
 Host Python did not have `pytest` installed during this validation, so pytest execution was deferred to a dev environment/container with project dev dependencies. Direct smoke checks, `compileall`, `docker compose config`, `docker compose build`, and a short `docker compose up` live startup were completed.
 
+### Phase 8 live quickstart validation note
+
+Validation date: 2026-06-06.
+
+The Phase 8 live quickstart path was validated from a clean Compose state using:
+
+```bash
+docker compose down -v --remove-orphans
+docker compose config
+docker compose up --build -d
+```
+
+Observed results within 5 minutes: Redpanda became healthy, ingestor connected in `live` mode and published more than 15,000 RecentChanges messages, processor wrote live `normalized_events`, `activity_metrics`, `bot_spike_signals`, and `data_quality_counts` snapshots every ~15 seconds, and Streamlit served `http://localhost:8501` with HTTP 200. Dashboard helper checks loaded 500 live overview metric rows, 20 live data-quality rows, 50 live bot-spike signal rows, and reported `freshness_status = fresh` with a latest observed event timestamp.
+
+Issue found and fixed: DuckDB dashboard reads could fail when successive Parquet snapshot files inferred a field as all-NULL in one batch and numeric in another, observed with `bot_spike_signals.spike_ratio`. The snapshot query helper now reads Parquet with `union_by_name=True`, with a regression test covering mixed NULL/DOUBLE batch schemas.
+
+Validation commands run after the fix:
+
+```bash
+PYTHONPATH=. uv run pytest tests/unit/test_foundation.py
+PYTHONPATH=. uv run pytest tests/unit tests/integration/test_live_pipeline_smoke.py
+docker compose up --build -d
+curl -fsS http://localhost:8501
+```
+
 1. Start the local stack:
 
    ```bash
