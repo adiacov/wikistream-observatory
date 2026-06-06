@@ -176,7 +176,7 @@
 
 - [X] T062 [P] Add Makefile targets for `make test`, `make up`, `make replay`, `make down`, and `make clean-snapshots` in `Makefile`
 - [X] T063 [P] Add a lightweight local run helper for live and replay modes in `bin/wikistream-dev`
-- [ ] T064 Run unit and integration tests and fix discovered issues in `tests/unit/` and `tests/integration/`
+- [X] T064 Run unit and integration tests and fix discovered issues in `tests/unit/` and `tests/integration/`
 - [ ] T065 Run Docker Compose live quickstart validation and fix discovered issues in `compose.yaml`
 - [ ] T066 Run Docker Compose replay quickstart validation and fix discovered issues in `data/replay/recentchange_sample.jsonl`
 - [ ] T067 Validate the MVP processes at least 300 RecentChanges events per minute with bounded memory and summarized dashboard output using replay or synthetic fixtures in `tests/integration/test_throughput.py`
