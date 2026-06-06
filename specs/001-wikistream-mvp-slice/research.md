@@ -53,6 +53,14 @@ Validation date: 2026-06-05.
 - **Rationale**: The spec requires distinct visible counts, and separating these categories demonstrates production-like data handling.
 - **Alternatives considered**: A single error count was rejected as too ambiguous. Event-level error browsing in the dashboard was rejected as unnecessary for MVP.
 
+## uv dependency and Docker image workflow
+
+Validation date: 2026-06-06. Sources checked: Astral uv Docker integration docs (`https://docs.astral.sh/uv/guides/integration/docker/`), uv project sync docs (`https://docs.astral.sh/uv/concepts/projects/sync/`), uv command reference/`uv 0.9.13` CLI help.
+
+- **Decision**: Manage project dependencies with uv's project workflow. Use `uv add`/`uv remove` for dependency declaration changes and keep `uv.lock` committed. In service Dockerfiles, copy `pyproject.toml` and `uv.lock` early, run `uv sync --frozen --no-dev --no-install-project` for locked runtime dependencies, then copy source and run `uv sync --frozen --no-dev --no-editable` to install the project. Set `UV_PROJECT_ENVIRONMENT=/usr/local` intentionally in containers so runtime commands can call `python` and console scripts directly without keeping a project `.venv` or uv binary in the final image. Set `UV_COMPILE_BYTECODE=1` for startup efficiency and remove uv cache/build tools after sync.
+- **Rationale**: This follows uv's project model directly instead of exporting a requirements file and re-entering the pip compatibility interface. Splitting dependency and project installation improves Docker layer caching because source edits do not invalidate the third-party dependency layer. `--frozen` makes the committed lockfile the source of truth for reproducible images.
+- **Alternatives considered**: `uv pip install` from an exported requirements file was rejected as less direct and less efficient for a uv-managed project. Installing a project `.venv` and running `uv run` in the final image was rejected for these services because uv is only needed at build time and the system Python environment is acceptable inside isolated containers.
+
 ## Structured logging
 
 - **Decision**: Use simple structured logs from each service with fields such as `service`, `event`, `mode`, `topic`, `count`, `domain`, `window_start`, `window_end`, and `error_type`.
