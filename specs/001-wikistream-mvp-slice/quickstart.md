@@ -207,6 +207,31 @@ rm -rf data/snapshots/*
 
 Bundled replay data under `data/replay/` should not be deleted by cleanup.
 
+## Throughput validation
+
+### Phase 8 throughput validation note
+
+Validation date: 2026-06-06.
+
+T067 adds `tests/integration/test_throughput.py`, a synthetic replay-style integration test covering the MVP target of at least 300 RecentChanges events per minute with bounded memory and summarized dashboard output. The test generates two event-time minutes with 300 accepted records each, runs the processor normalization/quality/metric/signal path, writes local Parquet snapshots, and queries them through dashboard data loaders.
+
+Observed/validated behavior:
+
+| Check | Expected/observed result |
+| --- | --- |
+| Input volume | 600 accepted synthetic replay records across 2 event-time minutes |
+| Throughput target | Processing rate is asserted to be at least 300 events/minute |
+| Memory bound | Python traced peak memory is asserted below 32 MiB for this synthetic batch |
+| Event volume metrics | Two `events_per_minute` metrics with value `300.0` |
+| Dashboard summaries | Overview metrics are fewer than raw event count; recent-event loader returns the dashboard limit of 100 rows |
+| Domain summarization | Top-domain output is capped to top 20 domains per minute bucket |
+
+Validation command:
+
+```bash
+PYTHONPATH=. uv run pytest tests/integration/test_throughput.py
+```
+
 ## Data-quality validation
 
 Use bundled replay fixtures containing malformed/rejected and missing-field records.
