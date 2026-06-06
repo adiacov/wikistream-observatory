@@ -1,8 +1,26 @@
 from __future__ import annotations
 
+import json
+
 import pytest
 
-from services.ingestor.wikistream_ingestor.replay import read_replay_records
+from services.ingestor.wikistream_ingestor.replay import publish_replay_records, read_replay_records
+
+
+class FakeProducer:
+    def __init__(self):
+        self.messages = []
+        self.flush_timeout = None
+
+    def produce(self, topic, *, key, value):
+        self.messages.append({"topic": topic, "key": key, "value": value})
+
+    def poll(self, timeout):
+        return None
+
+    def flush(self, timeout):
+        self.flush_timeout = timeout
+        return 0
 
 
 def test_reads_wrapper_records_with_payload_source_mode_and_pacing_seconds(tmp_path):
@@ -110,3 +128,35 @@ def test_source_mode_is_forced_to_replay_for_all_accepted_records(tmp_path):
     assert records[0].payload["meta"]["domain"] == "en.wikipedia.org"
     assert records[1].payload["meta"]["domain"] == "wikidata.org"
     assert all(record.malformed is False for record in records)
+
+
+def test_publish_replay_records_preserves_order_labels_replay_and_skips_malformed(tmp_path):
+    sample = tmp_path / "sample.jsonl"
+    sample.write_text(
+        '\n'.join(
+            [
+                '{"meta":{"id":"evt-1","domain":"en.wikipedia.org"},"type":"edit"}',
+                '{not valid json',
+                '{"source_mode":"live","payload":{"meta":{"id":"evt-2","domain":"wikidata.org"},"type":"new"}}',
+            ]
+        )
+        + '\n',
+        encoding="utf-8",
+    )
+    producer = FakeProducer()
+    slept = []
+
+    published, skipped = publish_replay_records(
+        read_replay_records(sample, default_pacing_seconds=0.01),
+        producer=producer,
+        topic="raw_recentchange",
+        sleep_fn=slept.append,
+    )
+
+    assert (published, skipped) == (2, 1)
+    assert [message["key"] for message in producer.messages] == ["evt-1", "evt-2"]
+    envelopes = [json.loads(message["value"].decode("utf-8")) for message in producer.messages]
+    assert [envelope["source_mode"] for envelope in envelopes] == ["replay", "replay"]
+    assert [envelope["payload"]["meta"]["domain"] for envelope in envelopes] == ["en.wikipedia.org", "wikidata.org"]
+    assert slept == [pytest.approx(0.01), pytest.approx(0.01)]
+    assert producer.flush_timeout == 30
