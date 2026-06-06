@@ -22,7 +22,7 @@ Build a local, Docker Compose-orchestrated streaming MVP that reads public Wikim
 
 **Project Type**: Local multi-service data application: ingestion service, stream processor service, analytical storage files, Streamlit dashboard, and tests/shared Python package.
 
-**Performance Goals**: Reviewer sees dashboard metrics within 5 minutes of quickstart; replay mode demonstrates metrics and at least one bot spike within 2 minutes; live freshness indicator updates within 60 seconds of observed events; dashboard refreshes snapshot queries every 15 seconds by default. The MVP target is to process at least 300 RecentChanges events per minute on a typical local developer machine while keeping memory bounded by window state and snapshot batching; under higher live volume, services may sample/log backpressure warnings but dashboard views must summarize rather than list every event.
+**Performance Goals**: A local user sees dashboard metrics within 5 minutes of quickstart; replay mode demonstrates metrics and at least one bot spike within 2 minutes; live freshness indicator updates within 60 seconds of observed events; dashboard refreshes snapshot queries every 15 seconds by default. The MVP target is to process at least 300 RecentChanges events per minute on a typical local developer machine while keeping memory bounded by window state and snapshot batching; under higher live volume, services may sample/log backpressure warnings but dashboard views must summarize rather than list every event.
 
 **Constraints**: Read-only access to Wikimedia; no paid services, cloud deployment, Kubernetes, historical backfill, complex ML, or enforcement/reporting actions; distinguish live versus replayed data; mark live data stale when no event has been observed for more than 60 seconds; keep malformed/rejected and missing-field counts separate. The ingestor must reconnect to Wikimedia EventStreams with capped exponential backoff after disconnects or transient HTTP errors. Services must be restart-safe for MVP use: Redpanda retains topic data in its local volume, the processor may reprocess recent raw messages idempotently using event ids/deterministic hashes, and generated snapshots may be rebuilt from replay data.
 
@@ -146,7 +146,7 @@ See [`research.md`](research.md). Decisions resolved: EventStreams access patter
 
 ## Phase 1 Design Summary
 
-See [`data-model.md`](data-model.md) for entities, validation rules, and relationships. Contracts are documented in [`contracts/topic-contracts.md`](contracts/topic-contracts.md), [`contracts/replay-data-contract.md`](contracts/replay-data-contract.md), and [`contracts/dashboard-contract.md`](contracts/dashboard-contract.md). End-to-end reviewer validation is documented in [`quickstart.md`](quickstart.md).
+See [`data-model.md`](data-model.md) for entities, validation rules, and relationships. Contracts are documented in [`contracts/topic-contracts.md`](contracts/topic-contracts.md), [`contracts/replay-data-contract.md`](contracts/replay-data-contract.md), and [`contracts/dashboard-contract.md`](contracts/dashboard-contract.md). End-to-end local validation is documented in [`quickstart.md`](quickstart.md).
 
 ## Post-Design Constitution Check
 

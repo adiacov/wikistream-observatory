@@ -2,13 +2,13 @@
 
 Real-time observability for Wikimedia RecentChanges activity, automation patterns, and review workload.
 
-WikiStream Observatory is a local, Docker Compose-based data engineering showcase. It reads the public Wikimedia RecentChanges stream, moves events through a Kafka-compatible broker, processes them into normalized facts and windowed metrics, writes local analytical snapshots, and presents the results in a Streamlit dashboard.
+WikiStream Observatory is a local, Docker Compose-based data engineering system. It reads the public Wikimedia RecentChanges stream, moves events through a Kafka-compatible broker, processes them into normalized facts and windowed metrics, writes local analytical snapshots, and presents the results in a Streamlit dashboard.
 
 The project is read-only. It does not write to Wikimedia, block edits, report users, or make enforcement decisions.
 
 ## Why this exists
 
-Wikimedia projects rely on both human contributors and automation. Bots can perform useful maintenance at high speed, and edit-review workflows need operational context across many wikis. A raw global event stream is difficult to interpret directly, so this project turns public RecentChanges events into reviewer-friendly observability signals:
+Wikimedia projects rely on both human contributors and automation. Bots can perform useful maintenance at high speed, and edit-review workflows need operational context across many wikis. A raw global event stream is difficult to interpret directly, so this project turns public RecentChanges events into operator-friendly observability signals:
 
 - what edit activity is happening now;
 - which Wikimedia domains are most active;
@@ -168,7 +168,7 @@ Shows:
 
 ### Empty states
 
-If no snapshots are available, the dashboard should remain usable and instruct the reviewer to start live ingestion or replay mode rather than failing with a raw error page.
+If no snapshots are available, the dashboard should remain usable and instruct the user to start live ingestion or replay mode rather than failing with a raw error page.
 
 ### Domain-level bot spike signal
 

@@ -32,5 +32,5 @@
 ## Notes
 
 - Validation passed.
-- Updated after initial creation to include reviewer-facing project documentation as an MVP requirement and user outcome.
+- Updated after initial creation to include user-facing project documentation as an MVP requirement and user outcome.
 - The specification is ready for `/speckit.plan`.

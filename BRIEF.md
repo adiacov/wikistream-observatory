@@ -16,7 +16,7 @@ Real-time observability for Wikimedia edit activity, automation patterns, and re
 
 ## Origin
 
-The user wants to build a serious data engineering showcase project while unemployed and searching for a data engineering role.
+The user wants to build a serious local data engineering project around a real streaming data source.
 
 The project must:
 
@@ -24,10 +24,9 @@ The project must:
 - use real data or solve a real problem;
 - use only free tools and free data sources;
 - feel close to a production-style data processing system;
-- be reviewable by other professionals;
-- preferably expose visible results through a local dashboard and/or GitHub Pages artifact.
+- expose visible results through a local dashboard and/or static artifact.
 
-Streaming was selected as the first showcase direction because it complements the user's previous batch-oriented Citibike capstone and avoids repeating the same project shape.
+Streaming was selected as the first direction because it complements the user's previous batch-oriented Citibike capstone and avoids repeating the same project shape.
 
 Wikimedia RecentChanges was selected as a promising data source because it is a real public event stream, free to access, high-volume, and operationally meaningful.
 
@@ -43,7 +42,7 @@ Wikimedia projects rely heavily on automation. Bots perform useful maintenance, 
 - bot-like activity can create large bursts of edits;
 - bot edits may be hidden from default Recent Changes views;
 - smaller wikis may be more vulnerable to spam, vandalism, or low-review-capacity bursts;
-- human reviewers need help focusing attention on relevant activity;
+- human review workflows need help focusing attention on relevant activity;
 - cross-wiki automation patterns are distributed and hard to summarize manually.
 
 This project should not pretend that Wikimedia lacks safeguards. Wikimedia already has bot policies, bot flags, abuse filters, edit review tools, counter-vandalism workflows, and machine-learning assisted review systems.
@@ -72,7 +71,7 @@ Prefer framing it as:
 - a streaming data engineering observability platform;
 - a transparency dashboard over public Wikimedia edit activity;
 - a local, reproducible pipeline that detects signals, not guilt;
-- a portfolio project demonstrating practical streaming ingestion, processing, storage, data quality, and dashboarding.
+- a practical streaming system with ingestion, processing, storage, data quality, and dashboarding.
 
 ---
 
@@ -175,7 +174,7 @@ https://www.mediawiki.org/wiki/ORES
 
 Key research points found:
 
-- Recent Changes filters are designed to help reviewers focus their effort;
+- Recent Changes filters are designed to help people focus their review effort;
 - quality and intent filters have used machine learning predictions;
 - ORES has been deprecated/modernized toward newer Wikimedia ML infrastructure such as LiftWing, so future agents must verify current status before depending on it;
 - the project should avoid depending on paid or unstable external ML services for MVP.
@@ -207,14 +206,7 @@ Preserve important research findings in the target project documentation, with s
 
 ---
 
-## Candidate users / reviewers
-
-Primary portfolio audience:
-
-- data engineering hiring managers;
-- senior data engineers reviewing project architecture;
-- technical recruiters who need a clear project story;
-- peers who want to run the system locally.
+## Candidate users
 
 Problem-domain users / conceptual users:
 
@@ -290,8 +282,7 @@ Produce a digest of edit stream activity:
 Value:
 
 - makes a complex public stream understandable;
-- creates a visible GitHub Pages artifact;
-- gives recruiters a clear output to inspect.
+- creates a visible static artifact.
 
 ---
 
@@ -307,7 +298,7 @@ The MVP should be a local Dockerized streaming platform that:
 6. exposes a Streamlit dashboard for local exploration;
 7. optionally exports a static summary report suitable for GitHub Pages.
 
-The MVP should be runnable by another professional with a simple command such as:
+The MVP should be runnable locally with a simple command such as:
 
 ```bash
 docker compose up --build
@@ -423,7 +414,7 @@ DuckDB note:
 
 Streamlit note:
 
-- Streamlit is preferred for the local dashboard because it is simple, free, and easy for reviewers to run.
+- Streamlit is preferred for the local dashboard because it is simple, free, and easy to run.
 
 ---
 
@@ -443,7 +434,7 @@ Include at least some of:
 - data freshness checks;
 - reproducible sample/replay mode for demos and tests.
 
-The sample/replay mode is important because a reviewer should be able to see meaningful dashboard data without waiting for long live collection.
+The sample/replay mode is important because meaningful dashboard data should be available without waiting for long live collection.
 
 ---
 
@@ -554,7 +545,7 @@ A strong MVP is better than a broad unfinished platform.
 
 ## Success criteria
 
-The project is successful as a portfolio showcase if another data professional can:
+The project is successful if a data professional can:
 
 1. clone the repo;
 2. run the full system locally with Docker Compose;

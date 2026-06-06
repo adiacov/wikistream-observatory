@@ -49,7 +49,7 @@
 
 ## Phase 3: User Story 1 - Observe Live Edit Activity (Priority: P1) 🎯 MVP
 
-**Goal**: A reviewer starts the local stack and sees live Wikimedia RecentChanges activity summarized in the dashboard with freshness status.
+**Goal**: A user starts the local stack and sees live Wikimedia RecentChanges activity summarized in the dashboard with freshness status.
 
 **Independent Test**: Run live mode, open `http://localhost:8501`, and verify event volume, top domains, event types, bot/non-bot share, and latest observed event/freshness update over time.
 
@@ -80,7 +80,7 @@
 
 ## Phase 4: User Story 5 - Understand Project Purpose and Usage (Priority: P1)
 
-**Goal**: A first-time reviewer understands the project purpose, local run path, dashboard usage, responsible framing, and limitations.
+**Goal**: A first-time user understands the project purpose, local run path, dashboard usage, responsible framing, and limitations.
 
 **Independent Test**: Read `README.md`, start the stack with the documented command, open the dashboard, and identify live/replay behavior and signal limitations without source-code knowledge.
 
@@ -93,15 +93,15 @@
 
 ### Validation for User Story 5
 
-- [X] T038 [US5] Manually audit reviewer-facing documentation against FR-015/SC-009: confirm README covers purpose, problem framing, observability solution, MVP scope, local run path, dashboard usage, replay mode, data-quality behavior, responsible-use boundaries, known limitations, dashboard URL, cleanup command, and local ports; record any gaps or validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
+- [X] T038 [US5] Manually audit user-facing documentation against FR-015/SC-009: confirm README covers purpose, problem framing, observability solution, MVP scope, local run path, dashboard usage, replay mode, data-quality behavior, responsible-use boundaries, known limitations, dashboard URL, cleanup command, and local ports; record any gaps or validation notes in `specs/001-wikistream-mvp-slice/quickstart.md`
 
-**Checkpoint**: Reviewer-facing documentation supports running and interpreting the MVP independently.
+**Checkpoint**: User-facing documentation supports running and interpreting the MVP independently.
 
 ---
 
 ## Phase 5: User Story 2 - Inspect an Explainable Bot Spike Signal (Priority: P2)
 
-**Goal**: A reviewer can inspect a domain-level bot spike signal with current-vs-baseline comparison and careful limitations.
+**Goal**: A user can inspect a domain-level bot spike signal with current-vs-baseline comparison and careful limitations.
 
 **Independent Test**: Feed live or replay data with a clear domain-level bot spike and verify the dashboard shows spike magnitude, windows, thresholds, optional top bot labels, and non-accusatory limitation text.
 
@@ -126,7 +126,7 @@
 
 ## Phase 6: User Story 3 - Demonstrate with Sample or Replay Data (Priority: P3)
 
-**Goal**: A reviewer can run replay mode using bundled representative sample data that populates metrics and a known bot spike quickly.
+**Goal**: A user can run replay mode using bundled representative sample data that populates metrics and a known bot spike quickly.
 
 **Independent Test**: Run `WIKISTREAM_MODE=replay docker compose up --build`, open the dashboard, and verify replay-labeled metrics and at least one expected bot spike appear within 2 minutes.
 
@@ -150,7 +150,7 @@
 
 ## Phase 7: User Story 4 - Understand Data Quality and Limitations (Priority: P4)
 
-**Goal**: A reviewer sees malformed/rejected counts, missing-field counts, freshness behavior, and limitations for metrics/signals.
+**Goal**: A user sees malformed/rejected counts, missing-field counts, freshness behavior, and limitations for metrics/signals.
 
 **Independent Test**: Feed replay fixtures with malformed and missing-field events and verify separate counts plus explanatory dashboard/documentation text.
 
@@ -172,7 +172,7 @@
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-**Purpose**: Validate the whole MVP, improve reviewer ergonomics, and ensure constitution compliance.
+**Purpose**: Validate the whole MVP, improve local usability, and ensure constitution compliance.
 
 - [X] T062 [P] Add Makefile targets for `make test`, `make up`, `make replay`, `make down`, and `make clean-snapshots` in `Makefile`
 - [X] T063 [P] Add a lightweight local run helper for live and replay modes in `bin/wikistream-dev`
@@ -234,7 +234,7 @@ Recommended sequential delivery: Setup → Foundational → US1 → US5 → US2 
 - Setup tasks T003, T004, T006, T007, T008, T009, and T010 can run in parallel after T001 creates directories.
 - Foundational tasks T012, T013, and T014 can run in parallel with each other after T011 is sketched.
 - US1 tests T021, T022, and T023 can run in parallel; dashboard data work T029 can run after snapshot contracts are known while ingestor work T026/T027 proceeds.
-- US5 documentation work T034-T037 should be implemented first; T038 is a manual acceptance audit after the reviewer-facing docs exist.
+- US5 documentation work T034-T037 should be implemented first; T038 is a manual acceptance audit after the user-facing docs exist.
 - US2 tests T039 and T040 can run in parallel; dashboard fixture task T046 can run once the signal model is defined.
 - US3 tests T048 and T049 can run in parallel; replay data T050 and replay publisher T051 can be developed in parallel after replay contract review.
 - US4 tests T056 and T057 can run in parallel before quality implementation.
@@ -289,7 +289,7 @@ Task: "T057 [P] [US4] Add freshness classification tests for live fresh, live st
 
 1. Setup + Foundational → shared infrastructure ready.
 2. US1 → live activity overview MVP.
-3. US5 → reviewer-facing documentation for purpose and usage.
+3. US5 → user-facing documentation for purpose and usage.
 4. US2 → non-trivial bot spike observability signal.
 5. US3 → deterministic replay demo path.
 6. US4 → visible data-quality counts and limitations.

@@ -34,6 +34,6 @@ Dashboard URL: `http://localhost:8501` when started with Docker Compose.
 
 ## Empty/error states
 
-- If snapshots are missing, dashboard should instruct the reviewer to start live ingestion or replay mode.
+- If snapshots are missing, dashboard should instruct the user to start live ingestion or replay mode.
 - If live stream is unavailable, dashboard should show stale/no-data status rather than implying current activity.
 - If replay mode is active, no widget may present replay data as current live activity.

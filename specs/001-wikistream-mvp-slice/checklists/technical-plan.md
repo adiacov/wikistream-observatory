@@ -58,7 +58,7 @@
 ## Dependencies & Assumptions
 
 - [x] CHK026 Are external Wikimedia assumptions documented with current-source verification expectations, including EventStreams behavior, schema fields, and read-only etiquette? [Dependency, Constitution §Project Constraints, Research §Wikimedia RecentChanges ingestion]
-- [x] CHK027 Are local dependency assumptions documented sufficiently for reviewers, including Docker Compose, image builds, ports, volumes, and no credential requirements? [Dependency, Plan §Technical Context, Quickstart §Prerequisites]
+- [x] CHK027 Are local dependency assumptions documented sufficiently for users, including Docker Compose, image builds, ports, volumes, and no credential requirements? [Dependency, Plan §Technical Context, Quickstart §Prerequisites]
   - Resolved: Plan, quickstart, and topic contract now document expected ports, shared snapshot volume behavior, broker readiness expectations, and no-credential assumptions.
 - [x] CHK028 Are Kafka/Redpanda topic contracts complete enough to support producer/consumer task creation without hidden assumptions? [Dependency, Topic Contracts §Redpanda topics]
 - [x] CHK029 Are Python package choices explicit enough to prevent task ambiguity around dependency files and shared-package installation? [Dependency, Plan §Primary Dependencies, Plan §Project Structure]
