@@ -45,11 +45,13 @@ def render_mode_and_freshness() -> None:
 
 def render_overview() -> None:
     config = load_config()
-    metrics = load_overview_metrics(config.snapshots.path)
+    metrics = load_overview_metrics(config.snapshots.path, source_mode=config.mode)
 
-    st.subheader("Live/replay activity overview")
+    st.subheader(f"{config.mode.title()} activity overview")
+    if config.mode == "replay":
+        st.info("Replay overview metrics come from bundled demo data and are not current live Wikimedia activity.")
     if not metrics:
-        st.info("No activity snapshots are available yet.")
+        st.info(f"No {config.mode} activity snapshots are available yet.")
         return
 
     volume = _metric_rows(metrics, "events_per_minute")
@@ -95,7 +97,7 @@ def _contributors(value: object) -> list[dict]:
 
 def render_bot_spike_signals() -> None:
     config = load_config()
-    signals = load_bot_spike_signals(config.snapshots.path)
+    signals = load_bot_spike_signals(config.snapshots.path, source_mode=config.mode)
 
     st.subheader("Domain-level bot spike signal")
     st.caption(
@@ -103,6 +105,9 @@ def render_bot_spike_signals() -> None:
         f"{config.signals.current_window_minutes}-minute window with the previous "
         f"{config.signals.baseline_window_minutes}-minute domain baseline."
     )
+
+    if config.mode == "replay":
+        st.info("Replay signals are deterministic demo outputs from bundled sample data, not current live Wikimedia activity.")
 
     if not signals:
         st.info(
@@ -150,6 +155,8 @@ def main() -> None:
     st.set_page_config(page_title="WikiStream Observatory", page_icon="🌊", layout="wide")
     st.title("WikiStream Observatory")
     st.caption("Read-only Wikimedia RecentChanges observability signals. Dashboard queries snapshots about every 15 seconds by default.")
+    if config.mode == "replay":
+        st.warning("Replay mode is active: all displayed data is demonstration/sample data, not current live Wikimedia activity.")
 
     render_mode_and_freshness()
     render_overview()
