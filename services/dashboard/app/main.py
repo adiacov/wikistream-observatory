@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from datetime import datetime, timezone
 
 import streamlit as st
 
@@ -33,7 +34,7 @@ def render_mode_and_freshness() -> None:
     cols[0].metric("Mode", status["source_mode"])
     cols[1].metric("Freshness", status["freshness_status"])
     latest = status["latest_observed_at"]
-    cols[2].metric("Latest observed event", latest.isoformat() if latest else "No data yet")
+    cols[2].metric("Latest observed event", _format_ts(latest) if latest else "No data yet")
 
     if status["freshness_status"] == "stale":
         st.warning("Live data is stale: no event has been observed within the configured freshness window.")
@@ -75,7 +76,19 @@ def render_overview() -> None:
 
 
 def _format_ts(value: object) -> str:
-    return value.isoformat() if hasattr(value, "isoformat") else str(value or "n/a")
+    if value is None:
+        return "n/a"
+    if isinstance(value, datetime):
+        timestamp = value
+    elif hasattr(value, "to_pydatetime"):
+        timestamp = value.to_pydatetime()
+    else:
+        return str(value)
+
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone.utc)
+    timestamp = timestamp.astimezone(timezone.utc)
+    return timestamp.strftime("%b %d, %Y %H:%M UTC")
 
 
 def _format_ratio(value: object) -> str:
@@ -142,12 +155,7 @@ def render_bot_spike_signals() -> None:
             contributors = _contributors(signal.get("top_contributing_bot_labels"))
             if contributors:
                 st.write("Top contributing bot labels (context only)")
-                st.dataframe(contributors[: config.signals.top_bots_limit], hide_index=True, use_container_width=True)
-
-            st.warning(
-                signal.get("limitations")
-                or "This is an observability signal, not an enforcement decision or account-level accusation."
-            )
+                st.dataframe(contributors[: config.signals.top_bots_limit], hide_index=True, width="stretch")
 
 
 def render_data_quality() -> None:
@@ -198,7 +206,11 @@ def main() -> None:
     render_bot_spike_signals()
     render_data_quality()
 
-    st.caption(f"Snapshot path: `{config.snapshots.path}` · Refresh interval target: {config.dashboard_refresh_seconds}s")
+    st.info(
+        "Responsible use: Signals are observability aids, not enforcement decisions or account-level accusations. "
+        "Stream-derived signals require contextual review."
+    )
+    st.caption(f"Refresh interval target: {config.dashboard_refresh_seconds}s")
 
 
 if __name__ == "__main__":

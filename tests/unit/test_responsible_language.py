@@ -91,6 +91,14 @@ def test_readme_and_dashboard_avoid_accusation_or_conduct_conclusion_terms():
         assert term not in user_facing_text
 
 
+def test_dashboard_ui_hides_internal_snapshot_path_and_uses_current_streamlit_width_api():
+    dashboard_source = Path("services/dashboard/app/main.py").read_text(encoding="utf-8")
+
+    assert "Snapshot path" not in dashboard_source
+    assert "use_container_width" not in dashboard_source
+    assert 'width="stretch"' in dashboard_source
+
+
 def test_wording_is_domain_first_even_when_top_bot_labels_are_present():
     signals = detect_bot_spikes(
         [
