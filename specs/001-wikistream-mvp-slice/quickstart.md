@@ -242,6 +242,33 @@ Expected outcomes:
 - accepted events with missing optional fields do not crash metrics;
 - intentionally malformed or missing-field sample events are handled safely or rejected, with at least 95% represented by the visible counts required by the spec.
 
+### Phase 8 malformed/missing-field coverage validation note
+
+Validation date: 2026-06-06.
+
+T068 extends `tests/integration/test_replay_pipeline.py` with an explicit quality-coverage scenario for intentionally problematic replay fixtures. The test builds a replay JSONL sample with valid controls plus 20 intentionally problematic records: 10 accepted records missing the optional `bot` field, 5 malformed JSON lines, and 5 records missing required fields for normalization. It then runs the replay reader and processor directly and computes visible coverage as:
+
+```text
+(missing_field_count + malformed_rejected_count) / intentionally_problematic_count
+```
+
+Observed/validated behavior:
+
+| Check | Expected/observed result |
+| --- | --- |
+| Problem fixtures | 20 total intentionally malformed/rejected or missing-field records |
+| Missing-field count | 10 accepted missing-field records |
+| Malformed/rejected count | 10 rejected records from malformed JSON or missing required fields |
+| Quality coverage | 100%, satisfying the at-least-95% requirement |
+| Accepted controls | Valid controls plus accepted missing-field records are normalized safely |
+| Freshness label | Replay quality counts report `freshness_status = replay` |
+
+Validation command:
+
+```bash
+PYTHONPATH=. uv run pytest tests/integration/test_replay_pipeline.py
+```
+
 ## Core logic checks
 
 After implementation, run:

@@ -27,6 +27,10 @@ def _event(*, event_id: str, domain: str = EXPECTED_SIGNAL_DOMAIN, timestamp: da
     }
 
 
+def _write_sample(path, lines: list[str]) -> None:
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def test_replay_pipeline_populates_overview_signal_and_quality_counts(tmp_path):
     """Replay JSONL should exercise parsing, normalization, metrics, signals, and quality accounting."""
 
@@ -67,7 +71,7 @@ def test_replay_pipeline_populates_overview_signal_and_quality_counts(tmp_path):
     lines.append("{not valid json")
     lines.append(json.dumps({"source_mode": "replay", "payload": {"meta": {"id": "missing-required"}}}))
 
-    sample.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    _write_sample(sample, lines)
 
     replay_records = list(read_replay_records(sample))
     result = process_replay_records(replay_records, observed_at=computed_at)
@@ -98,4 +102,48 @@ def test_replay_pipeline_populates_overview_signal_and_quality_counts(tmp_path):
     assert result.quality_counts.accepted_count == 27
     assert result.quality_counts.missing_field_count == 1
     assert result.quality_counts.malformed_rejected_count == 2
+    assert result.quality_counts.freshness_status == "replay"
+
+
+def test_replay_pipeline_covers_at_least_95_percent_of_malformed_and_missing_field_fixtures(tmp_path):
+    """Visible quality counts should represent intentionally problematic replay fixtures."""
+
+    sample = tmp_path / "quality_coverage_sample.jsonl"
+    computed_at = datetime(2026, 6, 5, 12, 45, tzinfo=timezone.utc)
+    event_ts = datetime(2026, 6, 5, 12, 40, tzinfo=timezone.utc)
+    lines: list[str] = []
+
+    valid_control_count = 3
+    for i in range(valid_control_count):
+        lines.append(json.dumps(_event(event_id=f"quality-valid-{i}", timestamp=event_ts, user="ControlUser", bot=False)))
+
+    missing_field_fixture_count = 10
+    for i in range(missing_field_fixture_count):
+        payload = _event(event_id=f"quality-missing-bot-{i}", timestamp=event_ts, user="MissingFieldUser", bot=False)
+        payload.pop("bot")
+        lines.append(json.dumps({"source_mode": "replay", "payload": payload}))
+
+    malformed_json_count = 5
+    for i in range(malformed_json_count):
+        lines.append('{"source_mode":"replay","payload":{"meta":{"id":"quality-malformed-' + str(i) + '"}')
+
+    rejected_required_field_count = 5
+    for i in range(rejected_required_field_count):
+        lines.append(json.dumps({"source_mode": "replay", "payload": {"meta": {"id": f"quality-missing-required-{i}", "domain": "en.wikipedia.org"}, "bot": False}}))
+
+    _write_sample(sample, lines)
+
+    intentionally_problematic_count = missing_field_fixture_count + malformed_json_count + rejected_required_field_count
+    replay_records = list(read_replay_records(sample))
+    result = process_replay_records(replay_records, observed_at=computed_at)
+
+    represented_problem_count = result.quality_counts.missing_field_count + result.quality_counts.malformed_rejected_count
+    quality_coverage = represented_problem_count / intentionally_problematic_count
+
+    assert result.quality_counts.accepted_count == valid_control_count + missing_field_fixture_count
+    assert len(result.normalized_events) == valid_control_count + missing_field_fixture_count
+    assert result.quality_counts.missing_field_count == missing_field_fixture_count
+    assert result.quality_counts.malformed_rejected_count == malformed_json_count + rejected_required_field_count
+    assert quality_coverage >= 0.95
+    assert quality_coverage == 1.0
     assert result.quality_counts.freshness_status == "replay"
