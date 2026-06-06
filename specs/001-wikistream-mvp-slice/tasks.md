@@ -174,7 +174,7 @@
 
 **Purpose**: Validate the whole MVP, improve reviewer ergonomics, and ensure constitution compliance.
 
-- [ ] T062 [P] Add Makefile targets for `make test`, `make up`, `make replay`, `make down`, and `make clean-snapshots` in `Makefile`
+- [X] T062 [P] Add Makefile targets for `make test`, `make up`, `make replay`, `make down`, and `make clean-snapshots` in `Makefile`
 - [ ] T063 [P] Add a lightweight local run helper for live and replay modes in `bin/wikistream-dev`
 - [ ] T064 Run unit and integration tests and fix discovered issues in `tests/unit/` and `tests/integration/`
 - [ ] T065 Run Docker Compose live quickstart validation and fix discovered issues in `compose.yaml`
