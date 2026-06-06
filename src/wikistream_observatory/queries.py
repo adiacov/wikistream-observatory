@@ -31,7 +31,7 @@ def query_snapshot(snapshot_root: Path | str, dataset: str, sql: str | None = No
 
     query = sql or "SELECT * FROM snapshot"
     with duckdb.connect(database=":memory:", read_only=False) as con:
-        con.execute(f"CREATE VIEW snapshot AS SELECT * FROM read_parquet({_sql_string_literal(glob)})")
+        con.execute(f"CREATE VIEW snapshot AS SELECT * FROM read_parquet({_sql_string_literal(glob)}, union_by_name=True)")
         rows = con.execute(query).fetchall()
         columns = [desc[0] for desc in con.description]
     return [dict(zip(columns, row, strict=True)) for row in rows]

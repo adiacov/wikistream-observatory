@@ -6,8 +6,8 @@ import json
 from wikistream_observatory.config import load_config
 from wikistream_observatory.kafka import decode_json_message, encode_json_message
 from wikistream_observatory.models import NormalizedRecentChangeEvent
-from wikistream_observatory.queries import snapshot_glob
-from wikistream_observatory.storage import dataset_path, remove_live_snapshots_older_than
+from wikistream_observatory.queries import query_snapshot, snapshot_glob
+from wikistream_observatory.storage import dataset_path, remove_live_snapshots_older_than, write_parquet_snapshot
 from wikistream_observatory.time_utils import bucket_bounds, classify_freshness, parse_event_timestamp
 
 
@@ -67,6 +67,15 @@ def test_storage_and_query_helpers_tolerate_missing_datasets(tmp_path):
     assert dataset_path(tmp_path, "activity_metrics") == tmp_path / "activity_metrics"
     assert snapshot_glob(tmp_path, "activity_metrics") is None
     assert remove_live_snapshots_older_than(tmp_path / "missing", retention_hours=6) == 0
+
+
+def test_query_snapshot_unions_parquet_schemas_by_name(tmp_path):
+    write_parquet_snapshot([{"source_mode": "live", "spike_ratio": None}], tmp_path, "bot_spike_signals")
+    write_parquet_snapshot([{"source_mode": "live", "spike_ratio": 3.5}], tmp_path, "bot_spike_signals")
+
+    rows = query_snapshot(tmp_path, "bot_spike_signals", "SELECT spike_ratio FROM snapshot ORDER BY spike_ratio NULLS FIRST")
+
+    assert rows == [{"spike_ratio": None}, {"spike_ratio": 3.5}]
 
 
 def test_kafka_json_helpers_round_trip():
