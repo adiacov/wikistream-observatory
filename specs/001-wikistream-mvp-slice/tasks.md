@@ -156,8 +156,8 @@
 
 ### Tests for User Story 4
 
-- [ ] T056 [P] [US4] Add data-quality classification tests for malformed JSON, rejected missing required fields, accepted missing optional fields, and timestamp issues in `tests/unit/test_quality.py`
-- [ ] T057 [P] [US4] Add freshness classification tests for live fresh, live stale, no-data, and replay status in `tests/unit/test_freshness.py`
+- [X] T056 [P] [US4] Add data-quality classification tests for malformed JSON, rejected missing required fields, accepted missing optional fields, and timestamp issues in `tests/unit/test_quality.py`
+- [X] T057 [P] [US4] Add freshness classification tests for live fresh, live stale, no-data, and replay status in `tests/unit/test_freshness.py`
 
 ### Implementation for User Story 4
 
