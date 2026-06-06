@@ -19,6 +19,11 @@ def _event(*, event_id: str, domain: str = EXPECTED_SIGNAL_DOMAIN, timestamp: da
         "bot": bot,
         "namespace": 0,
         "title": f"Page {event_id}",
+        "minor": False,
+        "patrolled": True,
+        "length": {"old": 100, "new": 105},
+        "revision": {"old": 1, "new": 2},
+        "comment": "Representative replay event",
     }
 
 
