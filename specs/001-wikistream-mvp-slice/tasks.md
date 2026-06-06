@@ -161,7 +161,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T058 [US4] Implement data-quality classification and counters for malformed/rejected, missing-field, accepted, and timestamp fallback records in `src/wikistream_observatory/quality.py`
+- [X] T058 [US4] Implement data-quality classification and counters for malformed/rejected, missing-field, accepted, and timestamp fallback records in `src/wikistream_observatory/quality.py`
 - [ ] T059 [US4] Extend processor to persist `data_quality_counts` snapshots with latest observed event time and freshness status inputs in `services/processor/wikistream_processor/main.py`
 - [ ] T060 [US4] Implement dashboard data-quality section with separate malformed/rejected and missing-field counts plus explanatory notes in `services/dashboard/app/main.py`
 - [ ] T061 [US4] Add data-quality and derived-signal limitation text to user-facing documentation in `README.md`
