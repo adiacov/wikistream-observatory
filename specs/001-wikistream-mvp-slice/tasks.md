@@ -183,7 +183,7 @@
 - [X] T068 Assert at least 95% handling/rejection coverage for intentionally malformed or missing-field replay fixtures in `tests/integration/test_replay_pipeline.py`
 - [X] T069 Validate restart/idempotence behavior by rerunning replay or restarting processor and checking deterministic event IDs prevent unsafe duplicate metrics/signals in `tests/integration/test_restart_idempotence.py`
 - [X] T070 Review all user-facing text for responsible-observability wording and remove accusation-oriented language in `README.md` and `services/dashboard/app/main.py`
-- [ ] T071 Update project state after implementation readiness in `STATE.md`
+- [X] T071 Update project state after implementation readiness in `STATE.md`
 
 ---
 
