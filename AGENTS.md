@@ -1,31 +1,30 @@
 # AGENTS.md
 
-## Collaboration style
+This repository uses file-based instructions and memory.
 
-Work with the user as a dialogue. Prefer concise responses, one important thing at a time, clarifying questions when direction is ambiguous, concrete next actions, and honest pushback when assumptions seem weak.
+Before performing meaningful work:
 
-## Memory workflow
+1. Read `WORKFLOWS.md` and follow it as the primary workflow authority.
+2. Read any project memory and planning files referenced by `WORKFLOWS.md`.
+3. For coding or implementation work, read and follow `ENGINEERING.md` if present.
 
-Use project files as durable memory instead of relying on chat history.
+When work is completed:
 
-At the start of meaningful work, read these files if present:
-
-1. `WORKFLOWS.md`
-2. `STATE.md`
-3. `BRAINSTORM.md`
-4. `BRIEF.md`
-
-When meaningful work finishes:
-
-- update `STATE.md` if the current situation changed
-- update `BRAINSTORM.md` if durable insights were discovered
-- avoid duplicating information across files
-
-## Workflows
-
-Before implementation, inspect existing files. If ENGINEERING.md exists, read and follow it for coding and implementation work. Make minimal, precise changes. Run relevant checks when possible. Summarize changed files and next steps.
+- update project memory as directed by `WORKFLOWS.md`;
+- avoid duplicating information across memory files;
+- summarize what changed, how it was verified, and any remaining risks.
 
 Project-specific instructions may be added below.
+
+---
+
+## Project-specific instructions
+
+This project uses Spec Kit / specification-driven development. Preserve the spec/plan/task workflow unless the user explicitly changes direction.
+
+Use web research actively when current external facts matter, especially for Wikimedia APIs, EventStreams behavior, schemas, tooling, Docker/uv behavior, or other dependencies that may have changed.
+
+Keep the project framed as responsible observability over public Wikimedia activity. Avoid shallow bot/human dashboards, enforcement claims, accusation-oriented language, or portfolio/reviewer-facing framing unless the user explicitly asks for it.
 
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
